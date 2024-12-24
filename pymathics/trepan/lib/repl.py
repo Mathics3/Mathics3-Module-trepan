@@ -21,13 +21,15 @@ This module contains the ``DebugREPL`` class
 """
 
 import sys
+import mathics.eval.trace as eval_trace
 
 from term_background import is_dark_background
-from typing import Any
+from typing import Any, Callable, Dict
 from trepan.interfaces.user import UserInterface
 from trepan.lib.default import DEBUGGER_SETTINGS
 from pymathics.trepan.lib.sighandler import SignalManager
 from pymathics.trepan.lib.core import DebuggerCore
+from mathics.eval.trace import eval_Stacktrace as eval_Stacktrace_original
 
 # Default settings used here
 from trepan.misc import option_set
@@ -44,8 +46,6 @@ except ImportError:
 
     pass
 
-debugger_obj = None
-
 
 class DebugREPL:
     """
@@ -59,6 +59,12 @@ class DebugREPL:
 
         See also ``Debugger.start`` and ``Debugger.stop``.
         """
+        from pymathics.trepan.stacktrace import (
+            eval_Stacktrace as trepan_eval_Stacktrace,
+        )
+        # from pymathics.trepan.tracing import (
+        #     print_evaluate as trepan_print_evaluate
+        # )
 
         self.thread = None
         self.eval_string = None
@@ -69,7 +75,8 @@ class DebugREPL:
             "apply",  # Builtin function call
             "evaluate-entry",  # before evaluate()
             "evaluate-result",  # after evaluate()
-            "evalMethod",  # calling a built-in evaluation method Class.eval_xxx()
+            "evalMethod",  # calling a built-in evaluation
+            # method Class.eval_xxx()
             "debugger",  # explicit call via "Debugger"
             "mpmath",  # mpmath call
         }
@@ -114,6 +121,30 @@ class DebugREPL:
 
         self.sigmgr = SignalManager(self)
 
+        # Replace some tracing functions
+        self.original_fns: Dict[str, Callable] = {
+            "eval_Stacktrace": eval_Stacktrace_original,
+            # "print_evaluate": print_evaluate_original
+        }
+        eval_trace.eval_Stacktrace = trepan_eval_Stacktrace
+        # eval_tracing.print_evaluate = trepan_print_evaluate
+
+        # Replace some tracing functions
+        self.original_fns: Dict[str, Callable] = {
+            "eval_Stacktrace": eval_Stacktrace_original,
+            # "print_evaluate": print_evaluate_original
+        }
+        eval_trace.eval_Stacktrace = trepan_eval_Stacktrace
+        # eval_tracing.print_evaluate = trepan_print_evaluate
+
+        # Replace some tracing functions
+        self.original_fns: Dict[str, Callable] = {
+            "eval_Stacktrace": eval_Stacktrace_original,
+            # "print_evaluate": print_evaluate_original
+        }
+        eval_trace.eval_Stacktrace = trepan_eval_Stacktrace
+        # eval_tracing.print_evaluate = trepan_print_evaluate
+
         # Were we requested to activate immediately?
         if get_option("activate"):
             self.core.start(get_option("start_opts"))
@@ -136,10 +167,10 @@ class DebugREPL:
 
 # Demo it
 if __name__ == "__main__":
-    d = DebugREPL()
-    print(d.settings)
+    dbg = DebugREPL()  # noqa
+    print(dbg.settings)
     import inspect
 
     current_frame = inspect.currentframe()
-    d.core.trace_dispatch(current_frame, "debugger", [])
+    dbg.core.trace_dispatch(current_frame, "debugger", [])
     pass

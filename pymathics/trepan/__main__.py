@@ -73,8 +73,10 @@ class DebugActivate(Builtin):
       <li>'NumPy':  debug NumPy calls
       <li>'SymPy': debug SymPy calls
       <li>'mpmath': debug mpmath calls
-      <li>'apply'; debug function apply calls that are <i>not</i> boxing routines
-      <li>'applyBox'; debug function apply calls that <i>are</i> boxing routines
+      <li>'apply'; debug function apply calls that are <i>not</i> boxing \
+          routines
+      <li>'applyBox'; debug function apply calls that <i>are</i> boxing \
+          routines
     </ul>
 
     >> DebugActivate[SymPy -> True]
@@ -96,11 +98,12 @@ class DebugActivate(Builtin):
             option, evaluation: Evaluation
         ) -> Tuple[Optional[list], bool]:
             """
-            Checks that `option` is valid; it should either be a String, a Mathics3 boolean, or a List of
-            Mathics3 String.
+            Checks that `option` is valid; it should either be a String, a
+            Mathics3 boolean, or a List of Mathics3 String.
 
-            The return is a tuple of the filter expression and a boolean indicating wither `option` was
-            valid. Recall that a filter of None means don't filter at all - except anything.
+            The return is a tuple of the filter expression and a boolean
+            indicating wither `option` was valid. Recall that a filter of
+            "None" means don't filter at all - accept anything.
             """
             if isinstance(option, ListExpression):
                 filters = []
@@ -156,9 +159,9 @@ class DebugActivate(Builtin):
                     tracing.run_sympy_traced if event_is_debugged else tracing.run_fast
                 )
 
-            # FIXME: we need to fold in whether to track boxing or not into
-            # apply_function(). As things stand now the single monkey-patched routine
-            # is clobbered by applyBox below
+            # FIXME: we need to fold in whether to track boxing or not
+            # into apply_function(). As things stand now the single
+            # monkey-patched routine is clobbered by applyBox below
             elif event_name == "apply":
                 FunctionApplyRule.apply_function = (
                     apply_builtin_fn_traced if event_is_debugged else EVALUATION_APPLY
