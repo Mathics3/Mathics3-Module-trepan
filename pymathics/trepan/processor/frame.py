@@ -69,6 +69,7 @@ def adjust_frame(proc_obj, count: int, is_absolute_pos: bool, frame_type: FrameT
         stack_len = len(proc_obj.stack)
         my_range = range(stack_len - 1, -1, -1)
         for i in my_range:
+            frame_lineno = proc_obj.stack[i]
             frame = frame_lineno[0]
             if is_builtin_eval_fn(frame):
                 if count == 0:

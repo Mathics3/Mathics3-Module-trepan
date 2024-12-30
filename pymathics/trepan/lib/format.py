@@ -172,12 +172,19 @@ def format_element(
             if len(element.elements) == 0:
                 return name
             else:
-                return (
-                    f"{name}"
-                    f"{', '.join([format_element(element, use_operator_form=use_operator_form) for element in element.elements])}"
+                expr_str = ", ".join(
+                    [
+                        format_element(element, use_operator_form=use_operator_form)
+                        for element in element.elements
+                    ]
                 )
+                return f"{name} {expr_str}"
 
-        elif use_operator_form and head.short_name in all_operators:
+        elif (
+            use_operator_form
+            and hasattr(head, "short_name")
+            and head.short_name in all_operators
+        ):
             operator_name = head.short_name
             if operator_name in binary_operator_set:
                 operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
@@ -199,16 +206,16 @@ def format_element(
                 operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
                 if operator_str is not None and len(element.elements) == 1:
                     return (
-                        operator_str +
-                        f"{format_element(element.elements[0], use_operator_form=use_operator_form)}"
-                        )
+                        operator_str
+                        + f"{format_element(element.elements[0], use_operator_form=use_operator_form)}"
+                    )
             elif operator_name in postfix_operator_set:
                 operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
                 if operator_str is not None and len(element.elements) == 1:
                     return (
-                        f"{format_element(element.elements[0], use_operator_form=use_operator_form)}" +
-                        operator_str
-                        )
+                        f"{format_element(element.elements[0], use_operator_form=use_operator_form)}"
+                        + operator_str
+                    )
             return f"{format_element(head)}[%s]" % (
                 ", ".join(
                     [
@@ -247,11 +254,12 @@ def format_element(
         return (
             f"{format_element(element.pattern, use_operator_form=use_operator_form)} "
             f"-> {format_element(element.replace, use_operator_form=use_operator_form)}"
-            )
+        )
     elif isinstance(element, RuleDelayed):
-        return (f"{format_element(element.pattern)} :> "
-                "{format_element(element.replace, use_operator_form=use_operator_form)}"
-                )
+        return (
+            f"{format_element(element.pattern)} :> "
+            "{format_element(element.replace, use_operator_form=use_operator_form)}"
+        )
     return str(element)
 
 

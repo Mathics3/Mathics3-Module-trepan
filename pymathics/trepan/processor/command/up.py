@@ -56,12 +56,13 @@ class UpCommand(DebuggerCommand):
 
         opts, rest_args = frame_parser.parse_args(args[1:])
 
-        if rest_args[0].lower().startswith("b:"):
-            opts.builtin = True
-            rest_args[0] = rest_args[0][2:]
-        elif rest_args[0].lower().startswith("e:"):
-            opts.expression = True
-            rest_args[0] = rest_args[0][2:]
+        if len(rest_args) > 0:
+            if rest_args[0].lower().startswith("b:"):
+                opts.builtin = True
+                rest_args[0] = rest_args[0][2:]
+            elif rest_args[0].lower().startswith("e:"):
+                opts.expression = True
+                rest_args[0] = rest_args[0][2:]
 
         frame_type = FrameType.python
         if opts.builtin:
@@ -76,6 +77,8 @@ class UpCommand(DebuggerCommand):
                 rest_args[0],
                 f"The 'up command requires a count. Got: {rest_args[0]}"
                 )
+            if amount is None:
+                return
 
         adjust_frame(self.proc, amount * self.signum, False,
                      frame_type)
