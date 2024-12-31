@@ -9,6 +9,7 @@ in particular.
 """
 
 from pymathics.trepan.__main__ import DebugActivate, Debugger, TraceActivate
+from pymathics.trepan.stacktrace import Stacktrace
 from pymathics.trepan.version import __version__
 
 pymathics_version_data = {
@@ -24,5 +25,6 @@ __all__ = [
     "DebugActivate",
     "Debugger",
     "TraceActivate",
+    "Stacktrace",
     "pymathics_version_data",
 ]

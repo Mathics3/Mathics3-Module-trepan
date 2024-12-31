@@ -32,6 +32,9 @@ from pymathics.trepan.tracing import (
     trace_evaluate,
 )
 
+
+from pymathics.trepan.stacktrace import eval_Stacktrace
+
 from typing import Dict, Optional, Tuple
 
 # FIXME: DRY with debugger.tracing.TraceEventNames
