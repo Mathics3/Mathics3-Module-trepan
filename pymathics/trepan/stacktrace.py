@@ -9,7 +9,6 @@ from mathics.eval.symbolic_history.stack import is_showable_frame
 
 from pymathics.trepan.lib.format import format_element, pygments_format
 from pymathics.trepan.lib.stack import format_eval_builtin_fn
-from pymathics.trepan.tracing import dbg
 
 
 def eval_Stacktrace():
@@ -91,7 +90,5 @@ class Stacktrace(_TraceBase):
     def eval(self, evaluation: Evaluation):
         "Stacktrace[]"
 
-        # Use longer-form resolve call
-        # so a debugger can change this.
         eval_Stacktrace()
         return SymbolNull

@@ -7,15 +7,15 @@ from mathics.core.expression import Expression
 from mathics.core.list import ListExpression
 from mathics.core.convert.op import ascii_operator_to_symbol
 from mathics.core.parser.operators import (
-    flat_binary_ops,
-    inequality_ops,
-    left_binary_ops,
-    misc_ops,
-    nonassoc_binary_ops,
-    postfix_ops,
-    prefix_ops,
-    right_binary_ops,
-    ternary_ops,
+    flat_binary_operators,
+    inequality_operators,
+    left_binary_operators,
+    misc_operators,
+    nonassoc_binary_operators,
+    postfix_operators,
+    prefix_operators,
+    right_binary_operators,
+    ternary_operators,
 )
 from mathics.core.pattern import AtomPattern, ExpressionPattern
 from mathics.core.rules import FunctionApplyRule, Rule
@@ -38,15 +38,15 @@ symbol_name_to_ascii_operator = {
     symbol_name: ascii_operator
     for ascii_operator, symbol_name in ascii_operator_to_symbol.items()
 }
-flat_binary_operator_set = set(flat_binary_ops.keys())
-inequality_operator_set = set(inequality_ops)
-left_binary_operator_set = set(left_binary_ops.keys())
-misc_operator_set = set(misc_ops.keys())
-nonassoc_binary_ops_set = set(nonassoc_binary_ops.keys())
-postfix_operator_set = set(postfix_ops.keys())
-prefix_operator_set = set(prefix_ops.keys())
-right_binary_operator_set = set(right_binary_ops.keys())
-ternary_operator_set = set(ternary_ops.keys())
+flat_binary_operator_set = set(flat_binary_operators.keys())
+inequality_operator_set = set(inequality_operators)
+left_binary_operator_set = set(left_binary_operators.keys())
+misc_operator_set = set(misc_operators.keys())
+nonassoc_binary_operators_set = set(nonassoc_binary_operators.keys())
+postfix_operator_set = set(postfix_operators.keys())
+prefix_operator_set = set(prefix_operators.keys())
+right_binary_operator_set = set(right_binary_operators.keys())
+ternary_operator_set = set(ternary_operators.keys())
 
 binary_operator_set = (
     flat_binary_operator_set
@@ -58,7 +58,7 @@ binary_operator_set = (
 all_operators = (
     binary_operator_set
     | misc_operator_set
-    | nonassoc_binary_ops_set
+    | nonassoc_binary_operators_set
     | postfix_operator_set
     | prefix_operator_set
     | ternary_operator_set
