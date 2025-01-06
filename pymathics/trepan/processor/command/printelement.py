@@ -76,7 +76,8 @@ class PrintElementCommand(DebuggerCommand):
                     self.msg("Try adding option -p?")
                 return
 
-        mathics_str = format_element(value, allow_python)
+        mathics_str = format_element(value, allow_python=allow_python,
+                                     use_operator_form=True)
         self.msg(pygments_format(mathics_str, self.settings["style"]))
     pass
 
