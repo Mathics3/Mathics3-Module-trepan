@@ -276,12 +276,27 @@ def debug_eval_method(method_name: str, *args, **kwargs):
         return method(*args, **kwargs)
 
 
+def trace_eval_method(method_name: str, *args, **kwargs):
+    global dbg
+    if dbg is None:
+        from pymathics.trepan.lib.repl import DebugREPL
+
+        dbg = DebugREPL()
+
+    mathics_str = format_element(args[0])
+    style = dbg.settings["style"]
+    msg = dbg.core.processor.msg
+    msg(f"eval_method: {pygments_format(mathics_str, style)}")
+    method = saved_methods.get(method_name)
+    if method is not None:
+        return method(*args, **kwargs)
+
+
 def pre_evaluation_debugger_hook(query, evaluation: Evaluation):
     """
     A debugger pre-evaluation hook that allows us to
     alter `evaluation` functions so we can debug or trace them
     """
-    print("Pre evaluation hook called")
     for method in event_filters["evalMethod"]:
         if method == "message":
             if saved_methods.get(method) is None:
@@ -304,6 +319,46 @@ def pre_evaluation_debugger_hook(query, evaluation: Evaluation):
                                 method, *args, **kwargs
                             )
                         )
+
+    return
+
+
+def pre_evaluation_trace_hook(query, evaluation: Evaluation):
+    """
+    A debugger pre-evaluation hook that allows us to
+    alter `evaluation` functions so we can debug or trace them
+    """
+    eval_method_filters = event_filters["evalMethod"]
+    if eval_method_filters is None:
+        return
+
+    for method in eval_method_filters:
+        if method == "message":
+            if saved_methods.get(method) is None:
+                saved_methods[method] = evaluation.message
+            evaluation.message = trace_eval_method
+        else:
+            definition = evaluation.definitions.get_definition(
+                method, only_if_exists=True
+            )
+            if definition is not None:
+                if len(definition.downvalues) > 1:
+                    print("Warning: more than one defnition found; "
+                          f"Trapping handling first one {definition.downvalues[0]}"
+                          "only.")
+                for value in definition.downvalues:
+                    if isinstance(value, FunctionApplyRule) and hasattr(
+                        value, "apply_function"
+                    ):
+                        # FIXME: this works if there is only one eval rule!
+                        if saved_methods.get(method) is None:
+                            saved_methods[method] = value.apply_function
+                        value.apply_function = (
+                            lambda *args, **kwargs: trace_eval_method(
+                                method, *args, **kwargs
+                            )
+                        )
+                        break
 
     return
 

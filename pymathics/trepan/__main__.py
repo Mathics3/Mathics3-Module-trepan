@@ -10,6 +10,7 @@ import mathics.core as mathics_core
 import mathics.core.parser
 import mathics.eval.files_io.files as io_files
 import mathics.eval.tracing as tracing
+import pymathics.trepan.tracing as trepan_tracing
 
 from mathics.core.atoms import String
 from mathics.core.builtin import Builtin
@@ -27,8 +28,8 @@ from pymathics.trepan.tracing import (
     call_event_get,
     call_trepan3k,
     debug_evaluate,
-    event_filters,
     pre_evaluation_debugger_hook,
+    pre_evaluation_trace_hook,
     trace_evaluate,
 )
 
@@ -154,7 +155,7 @@ class DebugActivate(Builtin):
                     else io_files.print_line_number_and_text
                 )
             elif event_name == "SymPy":
-                event_filters["SymPy"] = filters
+                trepan_tracing.event_filters["SymPy"] = filters
                 tracing.run_sympy = (
                     tracing.run_sympy_traced if event_is_debugged else tracing.run_fast
                 )
@@ -167,7 +168,7 @@ class DebugActivate(Builtin):
                     apply_builtin_fn_traced if event_is_debugged else EVALUATION_APPLY
                 )
             elif event_name == "evaluation":
-                event_filters["evaluate-entry"] = event_filters["evaluate-result"] = (
+                trepan_tracing.event_filters["evaluate-entry"] = trepan_tracing.event_filters["evaluate-result"] = (
                     filters
                 )
                 tracing.trace_evaluate_on_return = tracing.trace_evaluate_on_call = (
@@ -175,12 +176,12 @@ class DebugActivate(Builtin):
                 )
 
             elif event_name == "evalMethod":
-                event_filters["evalMethod"] = filters
+                trepan_tracing.event_filters["evalMethod"] = filters
                 mathics_core.PRE_EVALUATION_HOOK = (
                     pre_evaluation_debugger_hook if event_is_debugged else None
                 )
             elif event_name == "mpmath":
-                event_filters["mpmath"] = filters
+                trepan_tracing.event_filters["mpmath"] = filters
                 tracing.run_mpmath = (
                     tracing.run_mpmath_traced if event_is_debugged else tracing.run_fast
                 )
@@ -305,7 +306,7 @@ class TraceActivate(Builtin):
                     io_files.print_line_number_and_text if event_is_traced else None
                 )
             elif event_name == "SymPy":
-                event_filters["SymPy"] = filters
+                trepan_tracing.event_filters["SymPy"] = filters
                 tracing.run_sympy = (
                     tracing.run_sympy_traced if event_is_traced else tracing.run_fast
                 )
@@ -314,17 +315,17 @@ class TraceActivate(Builtin):
                     apply_builtin_fn_print if event_is_traced else EVALUATION_APPLY
                 )
             elif event_name == "evaluation":
-                event_filters["evaluation"] = filters
+                trepan_tracing.event_filters["evaluation"] = filters
                 tracing.trace_evaluate_on_return = tracing.trace_evaluate_on_call = (
                     trace_evaluate if event_is_traced else None
                 )
             elif event_name == "evalMethod":
-                event_filters["evalMethod"] = filters
+                trepan_tracing.event_filters["evalMethod"] = filters
                 mathics_core.PRE_EVALUATION_HOOK = (
-                    apply_builtin_fn_print if event_is_traced else None
+                    pre_evaluation_trace_hook if filters else None
                 )
             elif event_name == "applyBox":
-                event_filters["mpmath"] = filters
+                trepan_tracing.event_filters["mpmath"] = filters
                 FunctionApplyRule.apply_function = (
                     apply_builtin_fn_print if event_is_traced else EVALUATION_APPLY
                 )
