@@ -93,7 +93,7 @@ class DebugActivate(Builtin):
 
     # The function below should start with "eval"
     def eval(self, evaluation: Evaluation, options: dict):
-        "DebugActivate[OptionsPattern[DebugActivate]]"
+        "expression: DebugActivate[OptionsPattern[DebugActivate]]"
 
         def validate_option(
             option, evaluation: Evaluation
@@ -211,7 +211,7 @@ class Debugger(Builtin):
     summary_text = """get into Mathics3 Debugger REPL"""
 
     def eval(self, evaluation: Evaluation, options: dict):
-        "Debugger[OptionsPattern[Debugger]]"
+        "expression: Debugger[OptionsPattern[Debugger]]"
         if self.get_option(options, "trepan3k", evaluation) == SymbolTrue:
             global dbg
             if dbg is None:
@@ -245,7 +245,7 @@ class TraceActivate(Builtin):
     summary_text = """Set/unset tracing and debugging"""
 
     def eval(self, evaluation: Evaluation, options: dict):
-        "TraceActivate[OptionsPattern[TraceActivate]]"
+        "expression: TraceActivate[OptionsPattern[TraceActivate]]"
 
         # DRY with TraceActivate
         def validate_option(

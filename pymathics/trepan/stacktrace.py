@@ -6,7 +6,6 @@ from mathics.eval.trace import is_showable_frame
 
 from pymathics.trepan.lib.format import format_element, pygments_format
 from pymathics.trepan.lib.stack import format_eval_builtin_fn
-from pymathics.trepan.tracing import dbg
 
 
 def eval_Stacktrace():
