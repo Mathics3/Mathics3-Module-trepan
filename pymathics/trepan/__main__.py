@@ -211,7 +211,7 @@ class Debugger(Builtin):
     summary_text = """get into Mathics3 Debugger REPL"""
 
     def eval(self, evaluation: Evaluation, options: dict):
-        "expression: Debugger[OptionsPattern[Debugger]]"
+        "Debugger[OptionsPattern[Debugger]]"
         if self.get_option(options, "trepan3k", evaluation) == SymbolTrue:
             global dbg
             if dbg is None:
