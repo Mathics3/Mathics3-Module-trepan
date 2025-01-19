@@ -1,7 +1,9 @@
 """
 Mathics3 Debugger Builtin Functions
 
-These functions allow you to set events for entering the debugger when \
+The Mathics3 debugger is experimental.
+
+The following functions allow you to set events for entering the debugger when \
 an event is triggered, or enter the debugger immediately.
 """
 
@@ -78,6 +80,8 @@ class DebugActivate(Builtin):
           routines
       <li>'applyBox'; debug function apply calls that <i>are</i> boxing \
           routines
+      <li>'evaluation': debug evaluation() calls. This is similar to \
+          `TraceEvaluation'[], but each call stops in a debugger.
     </ul>
 
     >> DebugActivate[SymPy -> True]
@@ -202,9 +206,6 @@ class Debugger(Builtin):
 
     X> Debugger[]
      = ...
-
-    X> Debugger[trepan3k -> True]
-     = ...
     """
 
     options = {"trepan3k": "False"}
@@ -234,18 +235,55 @@ class TraceActivate(Builtin):
     """
     <dl>
       <dt>'TraceActivate'[$options$]
-      <dd>Set event tracing and debugging.
+      <dd>Set event tracing and debugging. Django and GUI users note: \
+      output appears in a console.
     </dl>
 
+    $options$ include:
+    <ul>
+      <li>'Get': trace Get[] calls, with Trace->True set
+      <li>'NumPy': trace NumPy calls
+      <li>'SymPy': trace SymPy calls
+      <li>'apply': trace function apply calls that are <i>not</i> boxing \
+          routines
+      <li>'applyBox': trace function apply calls that <i>are</i> boxing \
+          routines
+      <li>'evaluation': set to show expression evalatuion, rewrite and \
+          return values nicely formatted.
+      <li>'mpmath': trace mpmath calls
+    </ul>
+
+    >> TraceActivate[evaluation -> True]
+     = ...
+
+    Show something similar to `TraceEvaluation' output:
+    >> (x + 1)^2
+
+    >> TraceActivate[evaluation -> False]
+     = ...
+
+    We can set to  trace SymPy calls:
     >> TraceActivate[SymPy -> True]
      = ...
+
+    Now trigger some SymPy calls:
+    >> Table[N[Sin[x]], {x, 0, Pi}]
+     = ...
+
+    Turn off SymPy tracing:
+    >> TraceActivate[SymPy -> True]
+     = ...
+
+    See <url>:this section:
+    https://github.com/Mathics3/mathics3-trepan?tab=readme-ov-file#improved-traceevaluation</url> \
+    from the project page for an example of output.
     """
 
     options = EVENT_OPTIONS
     summary_text = """Set/unset tracing and debugging"""
 
     def eval(self, evaluation: Evaluation, options: dict):
-        "expression: TraceActivate[OptionsPattern[TraceActivate]]"
+        "TraceActivate[OptionsPattern[TraceActivate]]"
 
         # DRY with TraceActivate
         def validate_option(
