@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=70.0.0", # CVE-2024-38335 recommends this
+    "setuptools",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -9,7 +9,7 @@ name = "Mathics3-trepan"
 description = "Mathics3 Trepan debugger"
 dependencies = [
     "Mathics3>=7.0.0.dev0",
-    "trepan3k>=1.3.0",
+    "trepan3k>=1.3.1",
     "mathics-pygments",
 ]
 requires-python = ">=3.8"
@@ -20,6 +20,7 @@ maintainers = [
     {name = "Mathics3 Group"},
 ]
 classifiers = [
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -31,10 +32,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
-    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Topic :: Software Development :: Interpreters",
 ]
 dynamic = ["version"]
 
