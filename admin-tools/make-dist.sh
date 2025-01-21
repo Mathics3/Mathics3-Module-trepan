@@ -3,7 +3,9 @@ PACKAGE=Mathics3-trepan
 
 # FIXME put some of the below in a common routine
 function finish {
-  cd $mathics3_trepan_owd
+  if [[ -n "$mathics3_trepan_owd" ]] then
+     cd $mathics3_trepan_owd
+  fi
 }
 
 cd $(dirname ${BASH_SOURCE[0]})

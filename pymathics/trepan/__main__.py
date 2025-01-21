@@ -200,7 +200,7 @@ class DebugActivate(Builtin):
 class Debugger(Builtin):
     """
     <dl>
-      <dt>'Debugger'[trepan3k -> True]
+      <dt>'Debugger'[]
       <dd>enter debugger entry on certain event
     </dl>
 
