@@ -97,7 +97,7 @@ class DebugActivate(Builtin):
 
     # The function below should start with "eval"
     def eval(self, evaluation: Evaluation, options: dict):
-        "expression: DebugActivate[OptionsPattern[DebugActivate]]"
+        "DebugActivate[OptionsPattern[DebugActivate]]"
 
         def validate_option(
             option, evaluation: Evaluation

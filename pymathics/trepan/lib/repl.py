@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#   Copyright (C) 2024
+#   Copyright (C) 2024-2025
 #   Rocky Bernstein <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,13 @@ This module contains the ``DebugREPL`` class
 """
 
 import sys
-import mathics.eval.trace as eval_trace
 
 from term_background import is_dark_background
-from typing import Any, Callable, Dict
+from typing import Any
 from trepan.interfaces.user import UserInterface
 from trepan.lib.default import DEBUGGER_SETTINGS
 from pymathics.trepan.lib.sighandler import SignalManager
 from pymathics.trepan.lib.core import DebuggerCore
-from mathics.eval.trace import eval_Stacktrace as eval_Stacktrace_original
 
 # Default settings used here
 from trepan.misc import option_set
@@ -120,30 +118,6 @@ class DebugREPL:
             pass
 
         self.sigmgr = SignalManager(self)
-
-        # Replace some tracing functions
-        self.original_fns: Dict[str, Callable] = {
-            "eval_Stacktrace": eval_Stacktrace_original,
-            # "print_evaluate": print_evaluate_original
-        }
-        eval_trace.eval_Stacktrace = trepan_eval_Stacktrace
-        # eval_tracing.print_evaluate = trepan_print_evaluate
-
-        # Replace some tracing functions
-        self.original_fns: Dict[str, Callable] = {
-            "eval_Stacktrace": eval_Stacktrace_original,
-            # "print_evaluate": print_evaluate_original
-        }
-        eval_trace.eval_Stacktrace = trepan_eval_Stacktrace
-        # eval_tracing.print_evaluate = trepan_print_evaluate
-
-        # Replace some tracing functions
-        self.original_fns: Dict[str, Callable] = {
-            "eval_Stacktrace": eval_Stacktrace_original,
-            # "print_evaluate": print_evaluate_original
-        }
-        eval_trace.eval_Stacktrace = trepan_eval_Stacktrace
-        # eval_tracing.print_evaluate = trepan_print_evaluate
 
         # Were we requested to activate immediately?
         if get_option("activate"):
