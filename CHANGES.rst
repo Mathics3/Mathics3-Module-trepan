@@ -1,5 +1,12 @@
 CHANGES
 =======
+01/27/2025
+
+1.0.1
+
+Revise for API change in the 8.0.0 release.
+
+-------
 
 01/20/2025
 
