@@ -256,8 +256,9 @@ class TraceActivate(Builtin):
     >> TraceActivate[evaluation -> True]
      = ...
 
-    Show something similar to `TraceEvaluation' output:
+    Show something similar to 'TraceEvaluation' output:
     >> (x + 1)^2
+     = ...
 
     >> TraceActivate[evaluation -> False]
      = ...
