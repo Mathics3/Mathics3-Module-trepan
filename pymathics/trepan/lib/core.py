@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#   Copyright (C) 2024
+#   Copyright (C) 2024-2025
 #   Rocky Bernstein <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -29,12 +29,14 @@ import os
 import os.path as osp
 import sys
 import threading
-from typing import Any
+import types
+from typing import Any, Dict, Set
 
 import mathics.eval.tracing
 import pyficache
 import tracer
 import trepan.clifns as Mclifns
+from mathics.eval.tracing import skip_trivial_evaluation
 from tracer.tracefilter import TraceFilter
 from trepan.lib.breakpoint import BreakpointManager
 from trepan.lib.default import START_OPTS, STOP_OPTS
@@ -44,6 +46,7 @@ from trepan.misc import option_set
 from pymathics.trepan.tracing import event_filters
 from pymathics.trepan.processor.cmdproc import CommandProcessor
 
+IGNORE_CODE: Set[types.CodeType] = set([])
 
 class DebuggerCore:
     DEFAULT_INIT_OPTS = {
@@ -55,7 +58,7 @@ class DebuggerCore:
         "ignore_filter": TraceFilter([tracer, mathics.eval.tracing]),
     }
 
-    def __init__(self, debugger, opts=None):
+    def __init__(self, debugger, opts: Dict[str, Any]={}):
         """Create a debugger object. But depending on the value of
         key 'start' inside hash `opts', we may or may not initially
         start tracing events (i.e. enter the debugger).
@@ -104,6 +107,10 @@ class DebuggerCore:
         # If stop_level is None all breaks are counted otherwise just
         # those which less than or equal to stop_level.
         self.step_ignore = get_option("step_ignore")
+
+        # We can register specific code to not stop in.
+        # Typically this is debugger code like DebugEvaluation.eval()
+        self.ignore_code = opts.get("ignore_code", IGNORE_CODE)
 
         # If stop_level is not None, then we are next'ing or
         # finish'ing and will ignore frames greater than stop_level.
@@ -408,86 +415,78 @@ class DebuggerCore:
         if self.ignore_filter and self.ignore_filter.is_excluded(frame):
             return self
 
-        # For now we only allow one instance in a process
-        # In Python 2.6 and beyond one can use "with threading.Lock():"
-        try:
-            self.debugger_lock.acquire()
-
-            if self.trace_hook_suspend:
-                return None
-
-            self.event = event
-            if self.debugger.settings["trace"]:
-                print_event_set = self.debugger.settings["printset"]
-                if self.event in print_event_set:
-                    self.trace_processor.event_processor(frame, self.event, arg)
-                    pass
-                pass
-
-            if self.until_condition:
-                if not self.matches_condition(frame):
-                    return self
-                pass
-
-            trace_event_set = self.debugger.settings["events"]
-            if trace_event_set is None or self.event not in trace_event_set:
-                return self
-
-            event_filter = event_filters.get(event)
-
-            # Update arg to let user see details of callback
-            # in "info program"
-            self.arg = arg
-
-            if event_filter is not None:
-                if event == "mpmath" and event_filter:
-                    bound_mpmath_method, call_args = arg
-                    mpmath_name = bound_mpmath_method.__func__.__name__
-                    # If we have any mpmmath event filters listed, check that
-                    # mpmath_name on of the names listed.
-                    if mpmath_name not in event_filter and event_filter:
-                        return
-                    self.arg = (mpmath_name, bound_mpmath_method, call_args)
-                    pass
-                elif event == "SymPy":
-                    sympy_function, call_args = arg
-                    sympy_name = sympy_function.__name__
-                    # If we have any SymPy event filters listed, check that
-                    # sympy_name on of the names listed.
-                    if sympy_name not in event_filter and event_filter:
-                        return
-                    self.arg = (sympy_name, sympy_function, call_args)
-                elif event == "Get":
-                    file_path, call_args = arg
-                    if file_path not in event_filter and event_filter:
-                        return
-                elif event == "evaluate-result":
-                    orig_expr = arg[-1]
-                    # If any of the evaluation-result filters uses a short name, then we will take the
-                    # short name of the original expression.
-                    # TODO: Think about if we should allow short names in event filters or whether we should
-                    # always fill those in based on $Context or $ContextPath.
-                    use_short = all(name.find("`") == -1 for name in event_filter)
-                    if event_filter and orig_expr.get_name(short=use_short) not in event_filter:
-                        return
-                elif event == "evaluate-entry":
-                    expr = arg[0]
-                    if event_filter and expr.get_name() not in event_filter:
-                        return
-                else:
-                    print(f"FIXME: Unhandled event {event}")
-                    return
-
-            return self.processor.event_processor(frame, event, arg)
-        # except ReturnChanged:
-        #     raise
-        finally:
-            try:
-                self.debugger_lock.release()
-            except Exception:
+        self.event = event
+        if self.debugger.settings["trace"]:
+            print_event_set = self.debugger.settings["printset"]
+            if self.event in print_event_set:
+                self.trace_processor.event_processor(frame, self.event, arg)
                 pass
             pass
-        pass
+
+        if self.until_condition:
+            if not self.matches_condition(frame):
+                return self
+            pass
+
+        trace_event_set = self.debugger.settings["events"]
+        if trace_event_set is None or self.event not in trace_event_set:
+            return self
+
+        event_filter = event_filters.get(event)
+
+        # Update arg to let user see details of callback
+        # in "info program"
+        self.arg = arg
+
+        if event_filter is not None:
+            if event == "mpmath" and event_filter:
+                bound_mpmath_method, call_args = arg
+                mpmath_name = bound_mpmath_method.__func__.__name__
+                # If we have any mpmmath event filters listed, check that
+                # mpmath_name on of the names listed.
+                if mpmath_name not in event_filter and event_filter:
+                    return
+                self.arg = (mpmath_name, bound_mpmath_method, call_args)
+                pass
+            elif event == "SymPy":
+                sympy_function, call_args = arg
+                sympy_name = sympy_function.__name__
+                # If we have any SymPy event filters listed, check that
+                # sympy_name on of the names listed.
+                if sympy_name not in event_filter and event_filter:
+                    return
+                self.arg = (sympy_name, sympy_function, call_args)
+            elif event == "Get":
+                file_path, call_args = arg
+                if file_path not in event_filter and event_filter:
+                    return
+            elif event == "evaluate-result":
+                if frame.f_code in self.ignore_code:
+                    return
+                expr, _, status, orig_expr, _ = arg
+                # If any of the evaluation-result filters uses a short name, then we will take the
+                # short name of the original expression.
+                # TODO: Think about if we should allow short names in event filters or whether we should
+                # always fill those in based on $Context or $ContextPath.
+                use_short = all(name.find("`") == -1 for name in event_filter)
+                if event_filter and orig_expr.get_name(short=use_short) not in event_filter:
+                    return
+                if skip_trivial_evaluation(expr, status, orig_expr):
+                    return
+            elif event == "evaluate-entry":
+                if frame.f_code in self.ignore_code:
+                    return
+                expr, _, status, orig_expr, _ = arg
+                if event_filter and expr.get_name() not in event_filter:
+                    return
+                if skip_trivial_evaluation(expr, status, orig_expr):
+                    return
+
+            else:
+                print(f"FIXME: Unhandled event {event}")
+                return
+
+        return self.processor.event_processor(frame, event, arg)
 
     pass
 

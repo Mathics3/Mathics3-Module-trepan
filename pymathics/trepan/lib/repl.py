@@ -26,11 +26,18 @@ from term_background import is_dark_background
 from typing import Any
 from trepan.interfaces.user import UserInterface
 from trepan.lib.default import DEBUGGER_SETTINGS
+
+import pymathics.trepan.lib.core
+
+from pymathics.trepan.debug_evaluation import DebugEvaluation
 from pymathics.trepan.lib.sighandler import SignalManager
 from pymathics.trepan.lib.core import DebuggerCore
 
 # Default settings used here
 from trepan.misc import option_set
+
+# Set to ignore entry and exit calls to Mathics3 DebugEvaluation[]
+pymathics.trepan.lib.core.IGNORE_CODE.add(DebugEvaluation.eval.__code__)
 
 is_dark_bg = is_dark_background()
 default_style = "zenburn" if is_dark_bg else "colorful"

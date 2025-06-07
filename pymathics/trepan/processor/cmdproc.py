@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#   Copyright (C) 2024 Rocky Bernstein
+#   Copyright (C) 2024-2025 Rocky Bernstein
 #   <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ import trepan.lib.file as Mfile
 import trepan.lib.stack as Mstack
 import trepan.lib.thred as Mthread
 import trepan.misc as Mmisc
+from mathics.eval.tracing import print_evaluate
 from trepan.processor.complete_rl import completer
 from pygments.console import colorize
 from tracer import EVENT2SHORT
@@ -107,69 +108,16 @@ def get_mathics_stack(f, proc_obj=None) -> Tuple[list, int]:
     return stack, i
 
 
-def run_hooks(obj, hooks, *args):
-    """Run each function in `hooks' with args"""
-    for hook in hooks:
-        if hook(obj, *args):
-            return True
-        pass
-    return False
-
-
-def resolve_name(obj, command_name):
-    if command_name.lower() not in obj.commands:
-        if command_name in obj.aliases:
-            command_name = obj.aliases[command_name]
-            pass
-        else:
-            return None
-        pass
-    try:
-        return command_name.lower()
-    except Exception:
-        return None
-    return
-
-
-def print_source_line(msg, lineno, line, event_str=None):
-    """Print out a source line of text , e.g. the second
-    line in:
-        (/tmp.py:2):  <module>
-        L -- 2 import sys,os
-        (trepan3k)
-
-    We define this method
-    specifically so it can be customized for such applications
-    like ipython."""
-
-    # We don't use the filename normally. ipython and other applications
-    # however might.
-    return msg("%s %d %s" % (event_str, lineno, line))
-
-
-def print_source_location_info(
-    print_fn, filename, lineno, fn_name=None, f_lasti=None, remapped_file=None
-):
-    """Print out a source location , e.g. the first line in
-    line in:
-        (/tmp.py:2 @21):  <module>
-        L -- 2 import sys,os
-        (trepan3k)
+def print_event_location(proc_obj):
+    """Show a location based on an event type.
     """
-    if remapped_file:
-        mess = f"({remapped_file}:{lineno} remapped {filename}"
-    else:
-        mess = f"({filename}:{lineno}"
-    if f_lasti and f_lasti != -1:
-        mess += " @%d" % f_lasti
-        pass
-    mess += "):"
-    if fn_name and fn_name != "?":
-        mess += f" {fn_name}"
-        pass
-    print_fn(mess)
-    return
+    event_arg = proc_obj.event_arg
+    event = proc_obj.event
+    if event in ("evaluate-entry", "evaluate-result"):
+        expr, evaluation, status, orig_expr, _ = event_arg
+        print_evaluate(expr, evaluation, status, proc_obj.frame, orig_expr)
 
+    return
 
 def print_location(proc_obj):
     """Show where we are. GUI's and front-end interfaces often
@@ -378,6 +326,70 @@ def print_location(proc_obj):
     return True
 
 
+def print_source_line(msg, lineno, line, event_str=None):
+    """Print out a source line of text , e.g. the second
+    line in:
+        (/tmp.py:2):  <module>
+        L -- 2 import sys,os
+        (trepan3k)
+
+    We define this method
+    specifically so it can be customized for such applications
+    like ipython."""
+
+    # We don't use the filename normally. ipython and other applications
+    # however might.
+    return msg("%s %d %s" % (event_str, lineno, line))
+
+
+def print_source_location_info(
+    print_fn, filename, lineno, fn_name=None, f_lasti=None, remapped_file=None
+):
+    """Print out a source location , e.g. the first line in
+    line in:
+        (/tmp.py:2 @21):  <module>
+        L -- 2 import sys,os
+        (trepan3k)
+    """
+    if remapped_file:
+        mess = f"({remapped_file}:{lineno} remapped {filename}"
+    else:
+        mess = f"({filename}:{lineno}"
+    if f_lasti and f_lasti != -1:
+        mess += " @%d" % f_lasti
+        pass
+    mess += "):"
+    if fn_name and fn_name != "?":
+        mess += f" {fn_name}"
+        pass
+    print_fn(mess)
+    return
+
+
+def resolve_name(obj, command_name):
+    if command_name.lower() not in obj.commands:
+        if command_name in obj.aliases:
+            command_name = obj.aliases[command_name]
+            pass
+        else:
+            return None
+        pass
+    try:
+        return command_name.lower()
+    except Exception:
+        return None
+    return
+
+
+def run_hooks(obj, hooks, *args) -> bool:
+    """Run each function in `hooks' with args"""
+    for hook in hooks:
+        if hook(obj, *args):
+            return True
+        pass
+    return False
+
+
 # Default settings for command processor method call
 DEFAULT_PROC_OPTS = {
     # A list of debugger initialization files to read on first command
@@ -426,8 +438,6 @@ class CommandProcessor(Processor):
         self.intf = core_obj.debugger.intf
         self.last_command = None  # Initially a no-op
         self.precmd_hooks = []
-
-        self.location = lambda: print_location(self)
 
         self.preloop_hooks = []
         self.postcmd_hooks = []
@@ -788,7 +798,8 @@ class CommandProcessor(Processor):
         """Handle debugger commands."""
         if self.core.execution_status != "No program":
             self.setup()
-            self.location()
+            print_event_location(self)
+            print_location(self)
             pass
         else:
             self.list_object = None

@@ -2,7 +2,8 @@ import inspect
 import re
 import time
 from enum import Enum
-from typing import Callable
+from typing import Callable, Union
+import types
 
 import mathics.eval.tracing as eval_tracing
 from mathics.core.evaluation import Evaluation
@@ -368,7 +369,7 @@ def pre_evaluation_trace_hook(query, evaluation: Evaluation):
 message_count: int = 0
 
 
-def trace_evaluate(expr, evaluation, status: str, fn: Callable, orig_expr=None):
+def trace_evaluate(expr, evaluation, status: str, fn: Union[Callable, types.FrameType], orig_expr=None):
     """
     Print what's up with an evaluation. In contrast to debug_evaluate,
     we don't stop execution and go into a debugger.
@@ -414,7 +415,8 @@ def trace_evaluate(expr, evaluation, status: str, fn: Callable, orig_expr=None):
 
     if orig_expr is not None:
         formatted_orig_expr = format_element(orig_expr, use_operator_form=True)
-        if fn.__name__ == "rewrite_apply_eval_step":
+        fn_name = fn.__name__ if isinstance(fn, Callable) else fn.f_code
+        if fn_name == "rewrite_apply_eval_step":
             if orig_expr != expr[0]:
                 if status == "Returning":
                     if expr[1]:
