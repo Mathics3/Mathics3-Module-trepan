@@ -306,7 +306,7 @@ class TraceActivate(Builtin):
                     # TODO: accept a Symbol look up for {mpmath,
                     # SymPy, Numpy} name-ness
                     if not isinstance(elt, String):
-                        evaluation.message("DebugActivate", "opttname", option)
+                        evaluation.message("TraceActivate", "opttname", option)
                         return None, False
                     # TODO: check that string is a valid {mpmath,
                     # SymPy, Numpy} name.
@@ -319,7 +319,7 @@ class TraceActivate(Builtin):
                 # NumPy} name
                 return ([option.value], True)
             else:
-                evaluation.message("DebugActivate", "opttype", option)
+                evaluation.message("TraceActivate", "opttype", option)
                 return None, False
 
         # adjust_event_handlers(self, evaluation, options)

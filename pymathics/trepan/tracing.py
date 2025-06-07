@@ -230,7 +230,7 @@ def call_trepan3k(proc_obj):
     return
 
 
-def debug_evaluate(self, evaluation, status: str, orig_expr=None):
+def debug_evaluate(self, evaluation, status: str, orig_expr=None, return_value=None):
     """
     Called from a decorated Python @trace_evaluate .evaluate()
     method when DebugActivate["evaluation" -> True]
@@ -250,7 +250,7 @@ def debug_evaluate(self, evaluation, status: str, orig_expr=None):
     dbg.core.execution_status = "Running"
     event_str = "evaluate-entry" if status == "Evaluating" else "evaluate-result"
     dbg.core.trace_dispatch(
-        current_frame, event_str, (self, evaluation, status, orig_expr)
+        current_frame, event_str, (self, evaluation, status, orig_expr, return_value)
     )
 
 

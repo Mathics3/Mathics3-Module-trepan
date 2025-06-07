@@ -468,11 +468,11 @@ class DebuggerCore:
                     # TODO: Think about if we should allow short names in event filters or whether we should
                     # always fill those in based on $Context or $ContextPath.
                     use_short = all(name.find("`") == -1 for name in event_filter)
-                    if orig_expr.get_name(short=use_short) not in event_filter:
+                    if event_filter and orig_expr.get_name(short=use_short) not in event_filter:
                         return
                 elif event == "evaluate-entry":
                     expr = arg[0]
-                    if expr.get_name() not in event_filter:
+                    if event_filter and expr.get_name() not in event_filter:
                         return
                 else:
                     print(f"FIXME: Unhandled event {event}")
