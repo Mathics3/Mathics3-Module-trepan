@@ -51,17 +51,10 @@ def ctype_async_raise(thread_obj, exception):
 class QuitCommand(DebuggerCommand):
     """**quit** [**unconditionally**]
 
-    Gently terminate the debugged program.
+    Gently terminate Debugger[] or DebugEvaluate[].
 
-    The program being debugged is aborted via a *DebuggerQuit*
+    Note that the Mathics session still continues.
     exception.
-
-    When the debugger from the outside (e.g. via a `trepan` command), the
-    debugged program is contained inside a try block which handles the
-    *DebuggerQuit* exception.  However if you called the debugger was
-    started in the middle of a program, there might not be such an
-    exception handler; the debugged program still terminates but generally
-    with a traceback showing that exception.
 
     If the debugged program is threaded, we raise an exception in each of
     the threads ending with our own. However this might not quit the
@@ -100,13 +93,13 @@ class QuitCommand(DebuggerCommand):
         raise DebuggerQuitException
 
     def run(self, args):
-        confirmed = False
-        if len(args) <= 1:
-            if "!" != args[0][-1]:
-                confirmed = self.confirm("Really quit", False)
-            else:
-                confirmed = True
-            pass
+        confirmed = True
+        # if len(args) <= 1:
+        #     if "!" != args[0][-1]:
+        #         confirmed = self.confirm("Really quit", False)
+        #     else:
+        #         confirmed = True
+        #     pass
         if confirmed:
             threading_list = threading.enumerate()
             if (
