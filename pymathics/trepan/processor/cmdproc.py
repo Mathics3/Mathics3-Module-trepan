@@ -29,7 +29,6 @@ from reprlib import Repr
 from typing import Tuple
 
 import pyficache
-import trepan.exception as Mexcept
 import trepan.lib.display as Mdisplay
 import trepan.lib.file as Mfile
 import trepan.lib.stack as Mstack
@@ -44,6 +43,7 @@ from trepan.processor.cmdfns import deparse_fn
 from trepan.processor.cmdproc import get_stack
 from trepan.vprocessor import Processor
 
+from pymathics.trepan.lib.exception import DebuggerQuitException
 from pymathics.trepan.lib.stack import (format_eval_builtin_fn,
                                           is_builtin_eval_fn)
 from pymathics.trepan.tracing import call_event_debug
@@ -924,11 +924,7 @@ class CommandProcessor(Processor):
                             result = cmd_obj.run(args)
                             if result:
                                 return result
-                        except (
-                            Mexcept.DebuggerQuit,
-                            Mexcept.DebuggerRestart,
-                            SystemExit,
-                        ):
+                        except DebuggerQuitException:
                             # Let these exceptions propagate through
                             raise
                         except Exception:

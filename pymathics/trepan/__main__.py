@@ -21,6 +21,7 @@ from mathics.core.list import ListExpression
 from mathics.core.rules import FunctionApplyRule
 from mathics.core.symbols import SymbolFalse, SymbolTrue
 
+from pymathics.trepan.lib.exception import DebuggerQuitException
 from pymathics.trepan.tracing import (
     TraceEventNames,
     # apply_builtin_box_fn_traced,
@@ -228,7 +229,11 @@ class Debugger(Builtin):
                 print("Error getting current frame")
 
         else:
-            call_event_debug(tracing.TraceEvent.debugger, Debugger.eval, evaluation)
+            try:
+                call_event_debug(tracing.TraceEvent.debugger, Debugger.eval, evaluation)
+            except DebuggerQuitException:
+                # Go back into mathics.
+                pass
 
 
 class TraceActivate(Builtin):

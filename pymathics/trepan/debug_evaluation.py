@@ -9,6 +9,7 @@ from mathics.core.builtin import Builtin
 from mathics.core.attributes import A_HOLD_ALL, A_PROTECTED
 from mathics.core.evaluation import Evaluation
 
+from pymathics.trepan.lib.exception import DebuggerQuitException
 from pymathics.trepan.tracing import call_event_debug, debug_evaluate
 
 class DebugEvaluation(Builtin):
@@ -53,6 +54,8 @@ class DebugEvaluation(Builtin):
         evaluation.definitions.trace_evaluation = True
         try:
             return expr.evaluate(evaluation)
+        except DebuggerQuitException:
+            pass
         except Exception:
             raise
         finally:

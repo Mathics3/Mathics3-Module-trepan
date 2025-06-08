@@ -13,6 +13,7 @@ from mathics.core.symbols import (
     SymbolConstant,
     strip_context,
 )
+from mathics.eval.tracing import skip_trivial_evaluation
 from trepan.debugger import Trepan
 
 from pymathics.trepan.lib.format import format_element, pygments_format
@@ -390,32 +391,14 @@ def trace_evaluate(expr, evaluation, status: str, fn: Union[Callable, types.Fram
     msg = dbg.core.processor.msg
     style = dbg.settings["style"]
 
-    # Test and dispose of various situations where showing information
-    # is pretty useless: evaluating a Symbol is the Symbol.
-    # Showing the return value of a ListExpression literal is
-    # also useless.
-    if isinstance(expr, Symbol) and not isinstance(expr, SymbolConstant):
-        return
-
-    if (
-        status == "Returning"
-        and hasattr(expr, "is_literal")
-        and expr.is_literal
-        and hasattr(orig_expr, "is_literal")
-        and orig_expr.is_literal
-    ):
-        return
-
-    if orig_expr == expr:
-        # If the two expressions are the same, there is no point in
-        # repeating the output.
+    if skip_trivial_evaluation(expr, status, orig_expr):
         return
 
     indents = "  " * evaluation.recursion_depth
 
     if orig_expr is not None:
         formatted_orig_expr = format_element(orig_expr, use_operator_form=True)
-        fn_name = fn.__name__ if isinstance(fn, Callable) else fn.f_code
+        fn_name = fn.__name__ if hasattr(fn, "__name__") else None
         if fn_name == "rewrite_apply_eval_step":
             if orig_expr != expr[0]:
                 if status == "Returning":
