@@ -24,6 +24,7 @@ from mathics.core.expression import Expression
 from mathics.core.list import ListExpression
 from mathics.core.convert.op import ascii_operator_to_symbol
 from mathics.core.parser.operators import (
+    binary_operators,
     flat_binary_operators,
     inequality_operators,
     left_binary_operators,
@@ -48,6 +49,11 @@ from mathics.core.systemsymbols import (
 from mathics_pygments.lexer import MathematicaLexer
 from pygments import highlight
 from pygments.formatters import Terminal256Formatter
+
+# Constant to force no parenthesis. This
+# is used to make sure we don't add parenthsis when the
+# next symbol is not an operator.
+NO_PARENTHESIS_PRECEDENCE = 10000
 
 # from mathics.builtin.pattern import Pattern
 
@@ -206,17 +212,22 @@ def format_element(
             if operator_name in binary_operator_set:
                 operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
                 if operator_str is not None:
+                    precedence = get_operator_precedence(element)
                     result = []
                     for operand in element.elements[:-1]:
-                        result.append(
-                            format_element(operand, use_operator_form=use_operator_form)
-                        )
+                        child_precedence = get_operator_precedence(operand)
+                        child_str = format_element(operand, use_operator_form=use_operator_form)
+                        if child_precedence < precedence:
+                            child_str = f"({child_str})"
+                        result.append(child_str)
                         result.append(operator_str)
-                    result.append(
-                        format_element(
-                            element.elements[-1], use_operator_form=use_operator_form
-                        )
-                    )
+
+                    operand = element.elements[-1]
+                    child_precedence = get_operator_precedence(operand)
+                    child_str = format_element(operand, use_operator_form=use_operator_form)
+                    if child_precedence < precedence:
+                        child_str = f"({child_str})"
+                    result.append(child_str)
                     return " ".join(result)
                 pass
             elif operator_name in prefix_operator_set:
@@ -280,6 +291,19 @@ def format_element(
     elif isinstance(element, types.FunctionType):
         return f"<Python function {element.__qualname__}>"
     return str(element)
+
+def get_operator_precedence(element) -> int:
+    if not isinstance(element, (Expression, ExpressionPattern)):
+        return NO_PARENTHESIS_PRECEDENCE
+    head = element.head
+    operator_name = head.short_name
+    if operator_name in binary_operator_set:
+        operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
+        if operator_str is not None:
+            return binary_operators[operator_name]
+
+    return NO_PARENTHESIS_PRECEDENCE
+
 
 
 def pygments_format(mathics_str: str, style) -> str:
