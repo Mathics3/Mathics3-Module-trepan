@@ -24,7 +24,7 @@ from mathics.core.expression import Expression
 from mathics.core.list import ListExpression
 from mathics.core.convert.op import ascii_operator_to_symbol
 from mathics.core.parser.operators import (
-    binary_operators,
+    all_operators,
     flat_binary_operators,
     inequality_operators,
     left_binary_operators,
@@ -78,7 +78,7 @@ binary_operator_set = (
     | right_binary_operator_set
 )
 
-all_operators = (
+all_operator_set = (
     binary_operator_set
     | misc_operator_set
     | nonassoc_binary_operators_set
@@ -119,13 +119,35 @@ def format_element(
     internal object representations like ListExpression.
 
     """
+
+    def maybe_parenthesize_operand(precedence: int, operand) -> str:
+        """
+        format operand into a string and surround it with parenethesis
+           if it needs it. The need for parenthesis is determined by
+           `precedence` and precedence of `operand`.
+        """
+        child_precedence = get_operator_precedence(operand)
+        child_str = format_element(
+            operand, use_operator_form=use_operator_form
+            )
+        if child_precedence < precedence:
+            child_str = f"({child_str})"
+        return child_str
+
     if allow_python:
         if isinstance(element, (list, tuple)):
             aggregate_function = "list" if isinstance(element, list) else "tuple"
-            return (
-                f"{aggregate_function}("
-                f"{', '.join([format_element(e, use_operator_form=use_operator_form) for e in element])})"
+            fn_args = ", ".join(
+                [
+                    format_element(
+                        element=e,
+                        allow_python=allow_python,
+                        use_operator_form=use_operator_form,
+                    )
+                    for e in element
+                ]
             )
+            return f"{aggregate_function}(" f"{fn_args})"
         elif isinstance(element, dict):
             return (
                 "{\n  "
@@ -206,7 +228,7 @@ def format_element(
         elif (
             use_operator_form
             and hasattr(head, "short_name")
-            and head.short_name in all_operators
+            and head.short_name in all_operator_set
         ):
             operator_name = head.short_name
             if operator_name in binary_operator_set:
@@ -215,24 +237,19 @@ def format_element(
                     precedence = get_operator_precedence(element)
                     result = []
                     for operand in element.elements[:-1]:
-                        child_precedence = get_operator_precedence(operand)
-                        child_str = format_element(operand, use_operator_form=use_operator_form)
-                        if child_precedence < precedence:
-                            child_str = f"({child_str})"
+                        child_str = maybe_parenthesize_operand(precedence, operand)
                         result.append(child_str)
                         result.append(operator_str)
 
-                    operand = element.elements[-1]
-                    child_precedence = get_operator_precedence(operand)
-                    child_str = format_element(operand, use_operator_form=use_operator_form)
-                    if child_precedence < precedence:
-                        child_str = f"({child_str})"
+                    child_str = maybe_parenthesize_operand(precedence, element.elements[-1])
                     result.append(child_str)
                     return " ".join(result)
                 pass
             elif operator_name in prefix_operator_set:
                 operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
                 if operator_str is not None and len(element.elements) == 1:
+                    precedence = get_operator_precedence(element)
+                    child_str = maybe_parenthesize_operand(precedence, element.elements[0])
                     return (
                         operator_str
                         + f"{format_element(element.elements[0], use_operator_form=use_operator_form)}"
@@ -240,8 +257,10 @@ def format_element(
             elif operator_name in postfix_operator_set:
                 operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
                 if operator_str is not None and len(element.elements) == 1:
+                    precedence = get_operator_precedence(element)
+                    child_str = maybe_parenthesize_operand(precedence, element.elements[0])
                     return (
-                        f"{format_element(element.elements[0], use_operator_form=use_operator_form)}"
+                        f"{child_str}"
                         + operator_str
                     )
             return f"{format_element(head)}[%s]" % (
@@ -292,18 +311,18 @@ def format_element(
         return f"<Python function {element.__qualname__}>"
     return str(element)
 
+
 def get_operator_precedence(element) -> int:
     if not isinstance(element, (Expression, ExpressionPattern)):
         return NO_PARENTHESIS_PRECEDENCE
     head = element.head
     operator_name = head.short_name
-    if operator_name in binary_operator_set:
+    if operator_name in all_operators:
         operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
         if operator_str is not None:
-            return binary_operators[operator_name]
+            return all_operators[operator_name]
 
     return NO_PARENTHESIS_PRECEDENCE
-
 
 
 def pygments_format(mathics_str: str, style) -> str:

@@ -232,7 +232,7 @@ def call_trepan3k(proc_obj):
     return
 
 
-def debug_evaluate(self, evaluation, status: str, orig_expr=None, return_value=None):
+def debug_evaluate(expr, evaluation, status: str, fn, orig_expr=None):
     """
     Called from a decorated Python @trace_evaluate .evaluate()
     method when DebugActivate["evaluation" -> True]
@@ -252,7 +252,7 @@ def debug_evaluate(self, evaluation, status: str, orig_expr=None, return_value=N
     dbg.core.execution_status = "Running"
     event_str = "evaluate-entry" if status == "Evaluating" else "evaluate-result"
     dbg.core.trace_dispatch(
-        current_frame, event_str, (self, evaluation, status, orig_expr, return_value)
+        current_frame, event_str, (expr, evaluation, status, orig_expr, fn)
     )
 
 
@@ -345,9 +345,11 @@ def pre_evaluation_trace_hook(query, evaluation: Evaluation):
             )
             if definition is not None:
                 if len(definition.downvalues) > 1:
-                    print("Warning: more than one defnition found; "
-                          f"Trapping handling first one {definition.downvalues[0]}"
-                          "only.")
+                    print(
+                        "Warning: more than one defnition found; "
+                        f"Trapping handling first one {definition.downvalues[0]}"
+                        "only."
+                    )
                 for value in definition.downvalues:
                     if isinstance(value, FunctionApplyRule) and hasattr(
                         value, "apply_function"
@@ -370,7 +372,9 @@ def pre_evaluation_trace_hook(query, evaluation: Evaluation):
 message_count: int = 0
 
 
-def trace_evaluate(expr, evaluation, status: str, fn: Union[Callable, types.FrameType], orig_expr=None):
+def trace_evaluate(
+    expr, evaluation, status: str, fn: Union[Callable, types.FrameType], orig_expr=None
+):
     """
     Print what's up with an evaluation. In contrast to debug_evaluate,
     we don't stop execution and go into a debugger.
@@ -417,11 +421,13 @@ def trace_evaluate(expr, evaluation, status: str, fn: Union[Callable, types.Fram
                     )
                 )
         else:
-            formatted_expr = format_element(expr, use_operator_form=True)
+            formatted_expr = format_element(
+                expr, allow_python=True, use_operator_form=True
+            )
             assign_str = f"{formatted_orig_expr} = {formatted_expr}"
             msg(f"{indents}{status:10}: " f"{pygments_format(assign_str, style)}")
     elif not hasattr(fn, "__name__") or fn.__name__ != "rewrite_apply_eval_step":
-        formatted_expr = format_element(expr, use_operator_form=True)
+        formatted_expr = format_element(expr, use_operator_form=True, allow_python=True)
         msg(f"{indents}{status:10}: {pygments_format(formatted_expr, style)}")
 
 
