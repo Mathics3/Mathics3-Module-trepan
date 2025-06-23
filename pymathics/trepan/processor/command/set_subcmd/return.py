@@ -14,21 +14,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mathics.core.list import ListExpression
 from mathics.core.parser.util import parse_returning_code
-from mathics.core.symbols import SymbolFalse, SymbolTrue
 from mathics_scanner.errors import SyntaxError
 from mathics_scanner.feed import SingleLineFeeder
 from trepan.processor.command.base_subcmd import DebuggerSubcommand
+from pymathics.trepan.lib.format import pygments_format
 
 
 class SetReturn(DebuggerSubcommand):
-    """**set return *mathics-expr*
+    """**set return** *mathics-expr*
 
     The the return value for a call or return expression.
-    *mathics-expr* is a mathics expression for the return value,
-    True or False also needs to be given to specify whether the value is final
-    or whether it might undergo another rewrite and evaluation step.
+    *mathics-expr* is a mathics expression for the return value.
 
     Examples:
     --------
@@ -67,7 +64,11 @@ class SetReturn(DebuggerSubcommand):
 
         # Validation done. Now we can set the return value
 
-        print(mathics_expr)
+        style = self.debugger.settings["style"]
+        mathics_str = str(mathics_expr)
+        old_return_str = str(self.proc.return_value)
+        self.msg(f"Return value was: {pygments_format(old_return_str, style)}")
+        self.msg(f"Return set to: {pygments_format(mathics_str, style)}")
         self.proc.return_value = mathics_expr
         return
 
@@ -75,6 +76,6 @@ class SetReturn(DebuggerSubcommand):
 if __name__ == "__main__":
     from trepan.processor.command.set_subcmd.__demo_helper__ import demo_run
 
-    demo_run(SetReturn, ["[5, True]"])
+    demo_run(SetReturn, ["5"])
     demo_run(SetReturn, [])
     pass

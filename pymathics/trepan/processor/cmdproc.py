@@ -544,7 +544,14 @@ class CommandProcessor(Processor):
             will be unset, just like settrace(None) is called.
         """
 
+
         self.return_value = None
+        if event == "evaluate-result":
+            if isinstance(event_arg, tuple):
+                return_expr = event_arg[0]
+                return_value = return_expr[0] if isinstance(return_expr, tuple) else return_expr
+                self.return_value = return_value
+
         self.frame = frame
         self.event = event
         self.event_arg = event_arg

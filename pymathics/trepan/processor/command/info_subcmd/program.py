@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#   Copyright (C) 2024 Rocky Bernstein <rocky@gnu.org>
+#   Copyright (C) 2024-2025 Rocky Bernstein <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,11 @@ class InfoProgram(DebuggerSubcommand):
             self.msg(msg)
 
         style=self.settings["style"]
+
+        if self.proc.return_value is not None:
+            return_str = str(self.proc.return_value)
+            self.msg(f"Value set to return: {pygments_format(return_str, style)}")
+
         if event == "evalMethod":
             callback_arg = self.core.arg
             formatted_function = pygments_format(f"{callback_arg[0]}[]", style=style)

@@ -421,7 +421,8 @@ def trace_evaluate(
             formatted_expr = format_element(
                 expr, allow_python=True, use_operator_form=True
             )
-            assign_str = f"{formatted_orig_expr} = {formatted_expr}"
+            arrow = "<-" if status == "Returning" and isinstance(expr, tuple) else "="
+            assign_str = f"{formatted_orig_expr} {arrow} {formatted_expr}"
             msg(f"{indents}{status:10}: " f"{pygments_format(assign_str, style)}")
     elif not hasattr(fn, "__name__") or fn.__name__ != "rewrite_apply_eval_step":
         formatted_expr = format_element(expr, use_operator_form=True, allow_python=True)

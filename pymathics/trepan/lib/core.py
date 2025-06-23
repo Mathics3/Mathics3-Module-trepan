@@ -416,10 +416,11 @@ class DebuggerCore:
             return self
 
         self.event = event
+
         if self.debugger.settings["trace"]:
             print_event_set = self.debugger.settings["printset"]
             if self.event in print_event_set:
-                self.trace_processor.event_processor(frame, self.event, arg)
+                self.processor.event_processor(frame, self.event, arg)
                 pass
             pass
 
