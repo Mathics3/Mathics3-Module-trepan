@@ -7,13 +7,25 @@ Until we have some proper documentation here are some examples.
 Mathics3 Module Examples
 ------------------------
 
+Loading Module and getting help
++++++++++++++++++++++++++++++++
+
 To enable debugging in Mathics3, install ``mathics3-trepan``.
-Inside a mathics3 session run::
+Inside a mathics3 session run ``LoadModule["pymathics.trepan"]``.
 
-  In[1]:= LoadModule["pymathics.trepan"]
-  Out[1]= "pymathics.trepan"
+You can then force a call to the debugger using Mathics3 builtin function ``Debugger[]``.
 
-Next, you need to active some events to trigger going into the debugger::
+Extensive help is available in the debugger using the ``help`` command.
+
+Here is an example of this and calling ``help``:
+
+.. image:: https://github.com/Mathics3/mathics3-debugger/blob/master/screenshots/help-example.png
+
+
+Stopping on certain Mathics3 call events
++++++++++++++++++++++++++++++++++++++++++
+
+After loading Next, you may want to events to trigger going into the debugger::
 
   In[2]:= DebugActivate[mpmath->True]
   Out[2]=
@@ -53,7 +65,7 @@ When you are done inspecting things, run ``continue`` (or short-hand ``c``) to r
 
 
 Improved TraceEvaluation
-------------------------
++++++++++++++++++++++++++
 
 As before, install ``mathics3-trepan``. To set up tracing ``.evaluate()`` calls::
 
@@ -101,11 +113,11 @@ Now let's do the same thing but set the value of ``x``::
 Here, the return values have the computed Integer values from evaluation as you'd expect to see when working with Integer values instead of mixed symbolic and Integer values.
 
 DebugEvaluation
----------------
++++++++++++++++
 
 ``DebugEvaluation`` is like ``TraceEvaluation`` but instead of displaying expression information, we stop inside a a gdb-like debugger, or rather a trepan-like debugger. See https://github.com/Trepan-Debugger for other such gdb-like debuggers. I use this debugger base because I am familiar with the code and it was written in a way that was intended to be easily adapted to other programming languages.
 
-Extensive help is available in the debugger using the ``help`` command.
+
 
 
 Replacing Expression values in DebugEvaluation
@@ -115,52 +127,12 @@ You can change the computation of a value instead of calling a Mathics3 builtin 
 
 This is done using the ``set return`` command. Here is an example of that:
 
-::
+.. image:: https://github.com/Mathics3/mathics3-debugger/blob/master/screenshots/traceback-with-Ctrl-C.png
 
-    $ mathics
-
-    Mathics3 8.0.2.dev0
-    on CPython 3.12.11 (main, Jun 20 2025, 16:54:53) [GCC 13.3.0]
-    using SymPy 1.13.3, mpmath 1.3.0, numpy 2.2.6, cython 3.1.2
-
-    Copyright (C) 2011-2025 The Mathics3 Team.
-    This program comes with ABSOLUTELY NO WARRANTY.
-    This is free software, and you are welcome to redistribute it
-    under certain conditions.
-    See the documentation for the full license.
-
-    Quit by evaluating Quit[] or by pressing CONTROL-D.
-
-    In[1]:= LoadModule["pymathics.trepan"]
-    Out[1]= "pymathics.trepan"
-
-    In[2]:= DebugEvaluation[2 3 + 2]
-        Evaluating: 2 * 3 + 2
-
-    (/tmp/Mathics3/github/mathics-core/mathics/core/expression.py:580 @396): evaluate
-    @e 580                 expr, reevaluate = expr.rewrite_apply_eval_step(evaluation)
-    (Mathics3 Debug) continue
-        Evaluating: 2 * 3
-
-    (/tmp/Mathics3/mathics-core/mathics/core/expression.py:1198 @130): eval_range
-    @e 1198                             new_value = element.evaluate(evaluation)
-    (Mathics3 Debug) set return 23
-    23
-    (Mathics3 Debug) c
-        Returning : 2 * 3 + 2 = tuple(25, False)
-
-    (/tmp/Mathics3/mathics-core/mathics/core/expression.py:580 @396): evaluate
-    e@ 580                 expr, reevaluate = expr.rewrite_apply_eval_step(evaluation)
-    (Mathics3 Debug) set return 42
-    42
-    (Mathics3 Debug) c
-    Out[2]= 42
-
-    In[3]:=
 
 
 Post-mortem debugging
----------------------
+++++++++++++++++++++++
 
 
 To enter the debugger on an unrecoverable error, use the
@@ -195,7 +167,7 @@ To enter the debugger on an unrecoverable error, use the
 
 
 Showing Tracebacks on long-running operations
-----------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++
 
 The debugger (and trepan3k) support signal handling. With this, you can set up a ``SIGINT`` handler.
 
