@@ -479,6 +479,11 @@ class CommandProcessor(Processor):
         self.thread_name = None
         self.frame_thread_name = None
 
+        # When set to None, no special action is taken by the caller.
+        # However when it is not None it should be a Python tuple of
+        # (Expression, SymbolTrue|SymbolFalse)
+        self.return_value = None
+
         initfile_list = get_option("initfile_list")
         for init_cmdfile in initfile_list:
             self.queue_startfile(init_cmdfile)
@@ -539,6 +544,7 @@ class CommandProcessor(Processor):
             will be unset, just like settrace(None) is called.
         """
 
+        self.return_value = None
         self.frame = frame
         self.event = event
         self.event_arg = event_arg
@@ -563,7 +569,8 @@ class CommandProcessor(Processor):
         self.process_commands()
         if filename == "<string>":
             pyficache.remove_remap_file("<string>")
-        return self.event_processor
+
+        return self.return_value
 
     def forget(self):
         """Remove memory of state variables set in the command processor"""

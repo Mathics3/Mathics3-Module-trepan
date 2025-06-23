@@ -100,6 +100,65 @@ Now let's do the same thing but set the value of ``x``::
 
 Here, the return values have the computed Integer values from evaluation as you'd expect to see when working with Integer values instead of mixed symbolic and Integer values.
 
+DebugEvaluation
+---------------
+
+``DebugEvaluation`` is like ``TraceEvaluation`` but instead of displaying expression information, we stop inside a a gdb-like debugger, or rather a trepan-like debugger. See https://github.com/Trepan-Debugger for other such gdb-like debuggers. I use this debugger base because I am familiar with the code and it was written in a way that was intended to be easily adapted to other programming languages.
+
+Extensive help is available in the debugger using the ``help`` command.
+
+
+Replacing Expression values in DebugEvaluation
+++++++++++++++++++++++++++++++++++++++++++++++
+
+You can change the computation of a value instead of calling a Mathics3 builtin function, or replace the return value after calling a Mathics3 builtin function.
+
+This is done using the ``set return`` command. Here is an example of that:
+
+::
+
+    $ mathics
+
+    Mathics3 8.0.2.dev0
+    on CPython 3.12.11 (main, Jun 20 2025, 16:54:53) [GCC 13.3.0]
+    using SymPy 1.13.3, mpmath 1.3.0, numpy 2.2.6, cython 3.1.2
+
+    Copyright (C) 2011-2025 The Mathics3 Team.
+    This program comes with ABSOLUTELY NO WARRANTY.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions.
+    See the documentation for the full license.
+
+    Quit by evaluating Quit[] or by pressing CONTROL-D.
+
+    In[1]:= LoadModule["pymathics.trepan"]
+    Out[1]= "pymathics.trepan"
+
+    In[2]:= DebugEvaluation[2 3 + 2]
+        Evaluating: 2 * 3 + 2
+
+    (/tmp/Mathics3/github/mathics-core/mathics/core/expression.py:580 @396): evaluate
+    @e 580                 expr, reevaluate = expr.rewrite_apply_eval_step(evaluation)
+    (Mathics3 Debug) continue
+        Evaluating: 2 * 3
+
+    (/tmp/Mathics3/mathics-core/mathics/core/expression.py:1198 @130): eval_range
+    @e 1198                             new_value = element.evaluate(evaluation)
+    (Mathics3 Debug) set return 23
+    23
+    (Mathics3 Debug) c
+        Returning : 2 * 3 + 2 = tuple(25, False)
+
+    (/tmp/Mathics3/mathics-core/mathics/core/expression.py:580 @396): evaluate
+    e@ 580                 expr, reevaluate = expr.rewrite_apply_eval_step(evaluation)
+    (Mathics3 Debug) set return 42
+    42
+    (Mathics3 Debug) c
+    Out[2]= 42
+
+    In[3]:=
+
+
 Post-mortem debugging
 ---------------------
 

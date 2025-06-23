@@ -8,11 +8,7 @@ import types
 import mathics.eval.tracing as eval_tracing
 from mathics.core.evaluation import Evaluation
 from mathics.core.rules import FunctionApplyRule
-from mathics.core.symbols import (
-    Symbol,
-    SymbolConstant,
-    strip_context,
-)
+from mathics.core.symbols import strip_context
 from mathics.eval.tracing import skip_trivial_evaluation
 from trepan.debugger import Trepan
 
@@ -251,9 +247,10 @@ def debug_evaluate(expr, evaluation, status: str, fn, orig_expr=None):
 
     dbg.core.execution_status = "Running"
     event_str = "evaluate-entry" if status == "Evaluating" else "evaluate-result"
-    dbg.core.trace_dispatch(
+    result = dbg.core.trace_dispatch(
         current_frame, event_str, (expr, evaluation, status, orig_expr, fn)
     )
+    return result
 
 
 def debug_eval_method(method_name: str, *args, **kwargs):
