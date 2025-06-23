@@ -1,7 +1,7 @@
 `Mathics3 <https://mathics.org>`_ Debugger Module
 ==================================================
 
-Until we have some proper documentation here are some examples.
+Until we have some proper documentation, here are some examples.
 
 
 Mathics3 Module Examples
@@ -25,14 +25,14 @@ Here is an example of this and calling ``help``:
 Stopping on certain Mathics3 call events
 +++++++++++++++++++++++++++++++++++++++++
 
-After loading Next, you may want to events to trigger going into the debugger::
+After loading Next, you may want to set up events that trigger entering the debugger::
 
   In[2]:= DebugActivate[mpmath->True]
   Out[2]=
 
 Other events include: "Debugger", "Get", "Numpy", "SymPy", "apply", "evalMethod", and "evaluation".
 
-In the above, ``mpmath->True`` goes into the debugger anytime a mpmath function is called.
+In the above, ``mpmath->True`` goes into the debugger anytime an mpmath function is called.
 ``Exp[1.0]`` is such a function::
 
   In[3]:= Exp[1.0]
@@ -41,7 +41,7 @@ In the above, ``mpmath->True`` goes into the debugger anytime a mpmath function 
   mp 68             result_mp = tracing.run_mpmath(mpmath_function, *mpmath_args)
   (Mathics3 Debug)
 
-A useful command to run is ``bt -b`` which shows the Buitin Function calls in the call stack::
+A useful command to run is ``bt -b`` which shows the Built-in Function calls in the call stack::
 
     (Mathics3 Debug) bt -b
     B#0 (2) Power[z__]
@@ -75,7 +75,7 @@ As before, install ``mathics3-trepan``. To set up tracing ``.evaluate()`` calls:
     In[2]:= TraceActivate[evaluation->True]
     Out[2]=
 
-In contrast to ``DebugActivate``, ``TraceActivate`` just prints or traces events.
+In contrast to ``DebugActivate``, ``TraceActivate`` prints or traces events.
 
 Now we are ready for some action:
 
@@ -83,10 +83,10 @@ Now we are ready for some action:
 
 Above we trace before an ``evaluate()`` method call and also sometimes show the return value.
 
-To reduce the unnecessary output, evaluations when it has some value. In particular, above there is an evaluation of the Symbols "Power", and "Plus", The result of evaluating these is the same symbol. So we don't show either ``Evaluating: Power``or ``Returning: Power``. Similarly, we omit the same for ``Plus``.
+To reduce unnecessary output, evaluations are performed only when the evaluation changes. In particular, above there is an evaluation of the Symbols "Power" and "Plus". The result of evaluating these is the same symbol. So we don't show either ``Evaluating: Power``or ``Returning: Power``. Similarly, we omit the same for ``Plus``.
 
 We also omit ``Returning: Plus[1, x]`` because ``Plus[1, x]`` is the same expression as went in.
-But notice we *do* show ``Returning: Plus[x, 1] = Plus[1, x]``. Here the difference is that the order of the parameters got rearranged. Perhaps this is not interesting either, but currently, it is shown.
+But notice we *do* show ``Returning: Plus[x, 1] = Plus[1, x]``. Here, the difference is that the order of the parameters got rearranged. Perhaps this is not interesting either, but currently, it is shown.
 
 Now let's do the same thing but set the value of ``x``::
 
@@ -110,12 +110,12 @@ Now let's do the same thing but set the value of ``x``::
 
    Out[5]= 16
 
-Here, the return values have the computed Integer values from evaluation as you'd expect to see when working with Integer values instead of mixed symbolic and Integer values.
+Here, the return values have the computed Integer values from evaluation, as you'd expect to see when working with Integer values instead of mixed symbolic and Integer values.
 
 DebugEvaluation
 +++++++++++++++
 
-``DebugEvaluation`` is like ``TraceEvaluation`` but instead of displaying expression information, we stop inside a a gdb-like debugger, or rather a trepan-like debugger. See https://github.com/Trepan-Debugger for other such gdb-like debuggers. I use this debugger base because I am familiar with the code and it was written in a way that was intended to be easily adapted to other programming languages.
+``DebugEvaluation`` is like ``TraceEvaluation`` but instead of displaying expression information, we stop inside a a gdb-like debugger, or rather a trepan-like debugger. See https://github.com/Trepan-Debugger for other such gdb-like debuggers. I use this debugger base because I am familiar with the code, and it was written in a way that was intended to be easily adapted to other programming languages.
 
 
 
@@ -123,7 +123,7 @@ DebugEvaluation
 Replacing Expression values in DebugEvaluation
 ++++++++++++++++++++++++++++++++++++++++++++++
 
-You can change the computation of a value instead of calling a Mathics3 builtin function, or replace the return value after calling a Mathics3 builtin function.
+You can change the computation of a value instead of calling a Mathics3 built-in function, or replace the return value after calling a Mathics3 built-in function.
 
 This is done using the ``set return`` command. Here is an example of that:
 
