@@ -343,7 +343,7 @@ def pre_evaluation_trace_hook(query, evaluation: Evaluation):
             if definition is not None:
                 if len(definition.downvalues) > 1:
                     print(
-                        "Warning: more than one defnition found; "
+                        "Warning: more than one definition found; "
                         f"Trapping handling first one {definition.downvalues[0]}"
                         "only."
                     )

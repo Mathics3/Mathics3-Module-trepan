@@ -1,5 +1,5 @@
 """
-Additioal Mathics3 Functions added by Debugger.
+Additional Mathics3 Functions added by Debugger.
 
 This is similar to the mathics.builtin.trace module.
 """

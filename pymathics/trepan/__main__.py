@@ -108,7 +108,7 @@ class DebugActivate(Builtin):
             Mathics3 boolean, or a List of Mathics3 String.
 
             The return is a tuple of the filter expression and a boolean
-            indicating wither `option` was valid. Recall that a filter of
+            indicating whether `option` was valid. Recall that a filter of
             "None" means don't filter at all - accept anything.
             """
             if isinstance(option, ListExpression):
