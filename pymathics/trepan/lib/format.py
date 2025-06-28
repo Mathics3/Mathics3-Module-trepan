@@ -19,10 +19,11 @@ from mathics.builtin.patterns.basic import Blank, BlankNullSequence, BlankSequen
 from mathics.builtin.patterns.composite import Pattern, OptionsPattern
 from mathics.builtin.patterns.rules import RuleDelayed
 from mathics.core.atoms import Atom
+from mathics.core.builtin import Operator
 from mathics.core.element import BaseElement
 from mathics.core.expression import Expression
 from mathics.core.list import ListExpression
-from mathics.core.convert.op import ascii_operator_to_symbol
+from mathics.core.convert.op import operator_to_ascii
 from mathics.core.parser.operators import (
     all_operators,
     flat_binary_operators,
@@ -57,10 +58,6 @@ NO_PARENTHESIS_PRECEDENCE = 10000
 
 # from mathics.builtin.pattern import Pattern
 
-symbol_name_to_ascii_operator = {
-    symbol_name: ascii_operator
-    for ascii_operator, symbol_name in ascii_operator_to_symbol.items()
-}
 flat_binary_operator_set = set(flat_binary_operators.keys())
 inequality_operator_set = set(inequality_operators)
 left_binary_operator_set = set(left_binary_operators.keys())
@@ -106,7 +103,7 @@ def format_pattern(elements: tuple) -> str:
     assert len(elements) == 2
     first_arg = elements[0]
     second_arg = elements[1]
-    return f"{format_element(first_arg)}{format_element(second_arg)}"
+    return f"{format_element(first_arg)}:{format_element(second_arg, use_operator_form=True)}"
 
 
 def format_element(
@@ -147,7 +144,7 @@ def format_element(
                     for e in element
                 ]
             )
-            return f"{aggregate_function}(" f"{fn_args})"
+            return f"{aggregate_function}({fn_args})"
         elif isinstance(element, dict):
             return (
                 "{\n  "
@@ -192,12 +189,13 @@ def format_element(
     # ListExpression is a subclass of Expression
     elif isinstance(element, ListExpression):
         return format_list(element.elements)
-    elif isinstance(element, (Expression, ExpressionPattern)):
+    elif isinstance(element, (Expression, ExpressionPattern, Operator)):
         head = element.head
         # We handle printing "Expression"s which haven't been
         # converted to an internal data structure yet for example
         # Expression[List, Integer1, Integer2] instead of
         # ListExpression[Integer1, Integer2]
+
         if head is SymbolList:
             return format_list(element.elements)
         elif head is SymbolPattern and len(element.elements) == 2:
@@ -232,7 +230,7 @@ def format_element(
         ):
             operator_name = head.short_name
             if operator_name in binary_operator_set:
-                operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
+                operator_str = operator_to_ascii.get(operator_name, None)
                 if operator_str is not None:
                     precedence = get_operator_precedence(element)
                     result = []
@@ -246,7 +244,7 @@ def format_element(
                     return " ".join(result)
                 pass
             elif operator_name in prefix_operator_set:
-                operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
+                operator_str = operator_to_ascii.get(operator_name, None)
                 if operator_str is not None and len(element.elements) == 1:
                     precedence = get_operator_precedence(element)
                     child_str = maybe_parenthesize_operand(precedence, element.elements[0])
@@ -255,7 +253,7 @@ def format_element(
                         + f"{format_element(element.elements[0], use_operator_form=use_operator_form)}"
                     )
             elif operator_name in postfix_operator_set:
-                operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
+                operator_str = operator_to_ascii.get(operator_name, None)
                 if operator_str is not None and len(element.elements) == 1:
                     precedence = get_operator_precedence(element)
                     child_str = maybe_parenthesize_operand(precedence, element.elements[0])
@@ -318,7 +316,7 @@ def get_operator_precedence(element) -> int:
     head = element.head
     operator_name = head.short_name
     if operator_name in all_operators:
-        operator_str = symbol_name_to_ascii_operator.get(operator_name, None)
+        operator_str = operator_to_ascii.get(operator_name, None)
         if operator_str is not None:
             return all_operators[operator_name]
 

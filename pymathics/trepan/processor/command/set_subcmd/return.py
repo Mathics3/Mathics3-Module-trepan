@@ -16,6 +16,7 @@
 
 from mathics.core.parser.util import parse_returning_code
 from mathics_scanner.errors import SyntaxError
+from mathics_scanner.location import ContainerKind
 from mathics_scanner.feed import SingleLineFeeder
 from trepan.processor.command.base_subcmd import DebuggerSubcommand
 from pymathics.trepan.lib.format import pygments_format
@@ -51,7 +52,8 @@ class SetReturn(DebuggerSubcommand):
             self.errmsg("Cannot find definitions in evaluation object")
             return
 
-        feeder = SingleLineFeeder(command, filename="<set return input>")
+        feeder = SingleLineFeeder(command, container="<set return input>",
+                                  container_kind=ContainerKind.STREAM)
         definitions = evaluation.definitions
         try:
             mathics_expr, _ = parse_returning_code(definitions, feeder)
