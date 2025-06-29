@@ -46,7 +46,7 @@ from trepan.processor.complete_rl import completer
 from trepan.vprocessor import Processor
 
 from pymathics.trepan.lib.exception import DebuggerQuitException
-from pymathics.trepan.lib.format import format_location
+from pymathics.trepan.lib.location import format_as_file_line
 from pymathics.trepan.lib.stack import format_eval_builtin_fn, is_builtin_eval_fn
 from pymathics.trepan.tracing import call_event_debug
 
@@ -139,7 +139,7 @@ def print_location(proc_obj):
         if isinstance(event_arg, tuple) and len(event_arg) > 0:
             expr = event_arg[0]
             if hasattr(expr, "location") and expr.location:
-                mess = format_location(proc_obj.settings("style"), expr.location)
+                mess = format_as_file_line(expr.location)
                 intf_obj.msg(mess)
                 return
 

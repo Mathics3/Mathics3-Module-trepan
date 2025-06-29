@@ -12,7 +12,8 @@ from mathics.core.symbols import strip_context
 from mathics.eval.tracing import skip_trivial_evaluation
 from trepan.debugger import Trepan
 
-from pymathics.trepan.lib.format import format_element, format_location, pygments_format
+from pymathics.trepan.lib.format import format_element, pygments_format
+from pymathics.trepan.lib.location import format_location
 
 TraceEventNames = (
     "Debugger",  # a direct call to Debugger[]
