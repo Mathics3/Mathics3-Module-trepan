@@ -452,6 +452,8 @@ class CommandProcessor(Processor):
         self.last_command = None  # Initially a no-op
         self.precmd_hooks = []
 
+        self.location = lambda: print_location(self)
+
         self.preloop_hooks = []
         self.postcmd_hooks = []
         self.remap_file_re = None
