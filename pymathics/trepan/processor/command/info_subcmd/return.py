@@ -31,6 +31,9 @@ class InfoReturn(DebuggerSubcommand):
         style = self.debugger.settings["style"]
         return_str = str(self.proc.return_value)
         self.msg(f"Value set to return: {pygments_format(return_str, style)}")
+
+        if self.proc.event != "evaluate-result" and self.proc.return_value is None:
+            self.msg("Note: the None value indicates no change in expression value on debugger exit.")
         return
 
 

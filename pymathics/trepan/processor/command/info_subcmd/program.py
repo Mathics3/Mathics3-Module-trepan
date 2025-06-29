@@ -17,6 +17,7 @@
 # Our local modules
 from trepan.processor.command.base_subcmd import DebuggerSubcommand
 from pymathics.trepan.lib.format import pygments_format
+from pymathics.trepan.lib.location import format_location
 from pymathics.trepan.lib.stack import print_stack_trace
 
 
@@ -45,6 +46,15 @@ class InfoProgram(DebuggerSubcommand):
             self.msg(msg)
 
         style=self.settings["style"]
+
+        event_arg = proc.event_arg
+        if isinstance(event_arg, tuple) and len(event_arg) > 0:
+            event_arg = event_arg[0]
+        if hasattr(event_arg, "location") and event_arg.location:
+            mess = format_location(style, event_arg.location)
+            self.msg(mess)
+            return
+
 
         if self.proc.return_value is not None:
             return_str = str(self.proc.return_value)

@@ -137,11 +137,11 @@ def print_location(proc_obj):
     if proc_obj.event in ("evaluate-entry", "evaluate-result"):
         event_arg = proc_obj.event_arg
         if isinstance(event_arg, tuple) and len(event_arg) > 0:
-            expr = event_arg[0]
-            if hasattr(expr, "location") and expr.location:
-                mess = format_as_file_line(expr.location)
-                intf_obj.msg(mess)
-                return
+            event_arg = event_arg[0]
+        if hasattr(event_arg, "location") and event_arg.location:
+            mess = format_as_file_line(event_arg.location)
+            intf_obj.msg(mess)
+            return
 
     # Evaluation routines like "exec" don't show useful location
     # info. In these cases, we will use the position before that in
