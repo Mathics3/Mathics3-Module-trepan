@@ -24,6 +24,7 @@ import shlex
 import sys
 import tempfile
 import traceback
+
 # Note: the module name pre 3.2 is repr
 from reprlib import Repr
 from typing import Tuple
@@ -36,19 +37,17 @@ import trepan.lib.thred as Mthread
 import trepan.misc as Mmisc
 from mathics.eval.tracing import print_evaluate
 from mathics_scanner.location import get_location_file_line
-
-from trepan.processor.complete_rl import completer
 from pygments.console import colorize
 from tracer import EVENT2SHORT
 from trepan.processor import cmdfns
 from trepan.processor.cmdfns import deparse_fn
 from trepan.processor.cmdproc import get_stack
+from trepan.processor.complete_rl import completer
 from trepan.vprocessor import Processor
 
 from pymathics.trepan.lib.exception import DebuggerQuitException
-from pymathics.trepan.lib.stack import (format_eval_builtin_fn,
-                                          is_builtin_eval_fn)
-from pymathics.trepan.processor.location import format_location
+from pymathics.trepan.lib.format import format_location
+from pymathics.trepan.lib.stack import format_eval_builtin_fn, is_builtin_eval_fn
 from pymathics.trepan.tracing import call_event_debug
 
 warned_file_mismatches = set()
@@ -112,8 +111,7 @@ def get_mathics_stack(f, proc_obj=None) -> Tuple[list, int]:
 
 
 def print_event_location(proc_obj):
-    """Show a location based on an event type.
-    """
+    """Show a location based on an event type."""
     event_arg = proc_obj.event_arg
     event = proc_obj.event
     if event in ("evaluate-entry", "evaluate-result"):
@@ -121,6 +119,7 @@ def print_event_location(proc_obj):
         print_evaluate(expr, evaluation, status, proc_obj.frame, orig_expr)
 
     return
+
 
 def print_location(proc_obj):
     """Show where we are. GUI's and front-end interfaces often
@@ -140,7 +139,7 @@ def print_location(proc_obj):
         if isinstance(event_arg, tuple) and len(event_arg) > 0:
             expr = event_arg[0]
             if hasattr(expr, "location") and expr.location:
-                mess = format_location(proc_obj, expr.location)
+                mess = format_location(proc_obj.settings("style"), expr.location)
                 intf_obj.msg(mess)
                 return
 
@@ -567,7 +566,9 @@ class CommandProcessor(Processor):
         if event == "evaluate-result":
             if isinstance(event_arg, tuple) and len(event_arg) > 0:
                 return_expr = event_arg[0]
-                return_value = return_expr[0] if isinstance(return_expr, tuple) else return_expr
+                return_value = (
+                    return_expr[0] if isinstance(return_expr, tuple) else return_expr
+                )
                 self.return_value = return_value
                 if hasattr(return_value, "location") and return_value.location:
                     filename, lineno = get_location_file_line(return_value.location)
@@ -576,7 +577,6 @@ class CommandProcessor(Processor):
             if isinstance(event_arg, tuple) and len(event_arg) > 0:
                 if hasattr(event_arg[0], "location") and event_arg[0].location:
                     filename, lineno = get_location_file_line(event_arg[0].location)
-
 
         self.frame = frame
         self.event = event
@@ -830,7 +830,6 @@ class CommandProcessor(Processor):
             out_str = "-Graph-"
 
         self.msg(out_str)
-
 
     def process_commands(self):
         """Handle debugger commands."""

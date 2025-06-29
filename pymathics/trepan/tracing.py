@@ -1,9 +1,9 @@
 import inspect
 import re
 import time
-from enum import Enum
-from typing import Callable, Union
 import types
+from enum import Enum
+from typing import Callable, Dict, List, Union
 
 import mathics.eval.tracing as eval_tracing
 from mathics.core.evaluation import Evaluation
@@ -12,10 +12,7 @@ from mathics.core.symbols import strip_context
 from mathics.eval.tracing import skip_trivial_evaluation
 from trepan.debugger import Trepan
 
-from pymathics.trepan.lib.format import format_element, pygments_format
-
-from typing import Dict, List
-
+from pymathics.trepan.lib.format import format_element, format_location, pygments_format
 
 TraceEventNames = (
     "Debugger",  # a direct call to Debugger[]
@@ -380,6 +377,12 @@ def trace_evaluate(
     method when TraceActivate["evaluate" -> True]
     """
 
+    def show_location(location):
+        if location is not None:
+            formatted_location = format_location(style, expr.location)
+            msg(f"{indents}{formatted_location}")
+
+
     if evaluation.definitions.timing_trace_evaluation:
         evaluation.print_out(time.time() - evaluation.start_time)
 
@@ -396,7 +399,13 @@ def trace_evaluate(
         return
 
     indents = "  " * evaluation.recursion_depth
+    location = None
+    for e in (expr, orig_expr):
+        if hasattr(e, "location") and e.location:
+            location = e.location
+            break
 
+    mess = None
     if orig_expr is not None:
         formatted_orig_expr = format_element(orig_expr, use_operator_form=True)
         fn_name = fn.__name__ if hasattr(fn, "__name__") else None
@@ -411,6 +420,7 @@ def trace_evaluate(
                 else:
                     arrow = " = "
                 formatted_expr = format_element(expr[0], use_operator_form=True)
+                show_location(location)
                 msg(
                     f"{indents}{status:10}: "
                     + pygments_format(
@@ -423,11 +433,13 @@ def trace_evaluate(
                 expr = expr[0]
             formatted_expr = format_element(
                 expr, allow_python=True, use_operator_form=True
-                )
+            )
             assign_str = f"{formatted_orig_expr} -> {formatted_expr}"
+            show_location(location)
             msg(f"{indents}{status:10}: " f"{pygments_format(assign_str, style)}")
     elif not hasattr(fn, "__name__") or fn.__name__ != "rewrite_apply_eval_step":
         formatted_expr = format_element(expr, use_operator_form=True, allow_python=True)
+        show_location(location)
         msg(f"{indents}{status:10}: {pygments_format(formatted_expr, style)}")
 
 
