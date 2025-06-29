@@ -13,6 +13,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
+from typing import Callable
 
 from trepan.interfaces.server import ServerInterface
 
@@ -109,7 +110,7 @@ Use dbgr(*string*) to issue debugger command: *string*"""
             sys.excepthook = old_sys_excepthook
 
         # restore completion and our history if we can do so.
-        if hasattr(proc.intf[-1], "complete"):
+        if hasattr(proc.intf[-1], "complete") and isinstance(proc.intf[-1], Callable):
             try:
                 from readline import parse_and_bind, set_completer
 

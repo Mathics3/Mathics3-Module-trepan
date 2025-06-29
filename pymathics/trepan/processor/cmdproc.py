@@ -35,6 +35,8 @@ import trepan.lib.stack as Mstack
 import trepan.lib.thred as Mthread
 import trepan.misc as Mmisc
 from mathics.eval.tracing import print_evaluate
+from mathics_scanner.location import get_location_file_line
+
 from trepan.processor.complete_rl import completer
 from pygments.console import colorize
 from tracer import EVENT2SHORT
@@ -46,6 +48,7 @@ from trepan.vprocessor import Processor
 from pymathics.trepan.lib.exception import DebuggerQuitException
 from pymathics.trepan.lib.stack import (format_eval_builtin_fn,
                                           is_builtin_eval_fn)
+from pymathics.trepan.processor.location import format_location
 from pymathics.trepan.tracing import call_event_debug
 
 warned_file_mismatches = set()
@@ -124,12 +127,22 @@ def print_location(proc_obj):
     use this to update displays. So it is helpful to make sure
     we give at least some place that's located in a file.
     """
+
     i_stack = proc_obj.curindex
     if i_stack is None or proc_obj.stack is None:
         return False
     core_obj = proc_obj.core
     dbgr_obj = proc_obj.debugger
     intf_obj = dbgr_obj.intf[-1]
+
+    if proc_obj.event in ("evaluate-entry", "evaluate-result"):
+        event_arg = proc_obj.event_arg
+        if isinstance(event_arg, tuple) and len(event_arg) > 0:
+            expr = event_arg[0]
+            if hasattr(expr, "location") and expr.location:
+                mess = format_location(proc_obj, expr.location)
+                intf_obj.msg(mess)
+                return
 
     # Evaluation routines like "exec" don't show useful location
     # info. In these cases, we will use the position before that in
@@ -544,20 +557,29 @@ class CommandProcessor(Processor):
             will be unset, just like settrace(None) is called.
         """
 
+        filename = frame.f_code.co_filename
+        lineno = frame.f_lineno
 
         self.return_value = None
+
         if event == "evaluate-result":
-            if isinstance(event_arg, tuple):
+            if isinstance(event_arg, tuple) and len(event_arg) > 0:
                 return_expr = event_arg[0]
                 return_value = return_expr[0] if isinstance(return_expr, tuple) else return_expr
                 self.return_value = return_value
+                if hasattr(return_value, "location") and return_value.location:
+                    filename, lineno = get_location_file_line(return_value.location)
+            pass
+        elif event == "evaluate-entry":
+            if isinstance(event_arg, tuple) and len(event_arg) > 0:
+                if hasattr(event_arg[0], "location") and event_arg[0].location:
+                    filename, lineno = get_location_file_line(event_arg[0].location)
+
 
         self.frame = frame
         self.event = event
         self.event_arg = event_arg
 
-        filename = frame.f_code.co_filename
-        lineno = frame.f_lineno
         line = linecache.getline(filename, lineno, frame.f_globals)
         if not line:
             opts = {

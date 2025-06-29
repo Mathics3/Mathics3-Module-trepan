@@ -34,6 +34,7 @@ from trepan.lib.stack import (
 )
 from mathics.core.builtin import Builtin
 from mathics.core.element import BaseElement
+from mathics.core.evaluation import Evaluation
 from mathics.core.expression import Expression
 from mathics.core.pattern import ExpressionPattern
 from pymathics.trepan.lib.format import format_element, pygments_format
@@ -104,6 +105,11 @@ def format_function_and_parameters(frame, debugger, style: str) -> Tuple[bool, s
 
         if self_arg_mathics_formatted is not None:
             args = args[1:]
+
+        if len(args) > 0 and args[-1] == "evaluation" and isinstance(local_vars["evaluation"], Evaluation):
+            # Simiplify: We don't need to show the evaluation parameter along with
+            # its type and object address.
+            args = args[:-1]
 
         try:
             params = inspect.formatargvalues(args, varargs, varkw, local_vars)
