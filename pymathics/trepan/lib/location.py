@@ -33,7 +33,7 @@ def format_as_file_line(loc: Union[SourceRange, types.MethodType]) -> str:
         func = loc.__func__
         # doc = func.__doc__
         code = func.__code__
-        filename = {code.co_filename}
+        filename = code.co_filename
         line_number = code.co_firstlineno
         return "(%s:%s): <module>" % (filename, line_number)
 
@@ -50,7 +50,7 @@ def format_location(style: str, loc: Union[SourceRange, types.MethodType]) -> st
         doc = func.__doc__
         code = func.__code__
         formatted_doc = "" if doc is None else pygments_format(doc, style)
-        filename = {code.co_filename}
+        filename = code.co_filename
         line_number = code.co_firstlineno
         return "%s %s at line %s" % (
             formatted_doc,

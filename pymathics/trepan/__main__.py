@@ -12,7 +12,9 @@ import mathics.core as mathics_core
 import mathics.core.parser
 import mathics.eval.files_io.files as io_files
 import mathics.eval.tracing as tracing
+import mathics_scanner.location
 import pymathics.trepan.tracing as trepan_tracing
+
 
 from mathics.core.atoms import String
 from mathics.core.builtin import Builtin
@@ -53,6 +55,9 @@ EVENT_OPTIONS: Dict[str, str] = {
 }
 
 parse_untraced = mathics.core.parser.parse
+
+# Set location tracking on
+mathics_scanner.location.TRACK_LOCATIONS = True
 
 # FIXME:
 
