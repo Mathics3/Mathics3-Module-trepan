@@ -15,6 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import types
+from typing import Literal
 from mathics.builtin.patterns.basic import Blank, BlankNullSequence, BlankSequence
 from mathics.builtin.patterns.composite import Pattern, OptionsPattern
 from mathics.builtin.patterns.rules import RuleDelayed
@@ -54,7 +55,7 @@ from pygments.formatters import Terminal256Formatter
 # Constant to force no parenthesis. This
 # is used to make sure we don't add parenthsis when the
 # next symbol is not an operator.
-NO_PARENTHESIS_PRECEDENCE = 10000
+NO_PARENTHESIS_PRECEDENCE: Literal[10000] = 10000
 
 # from mathics.builtin.pattern import Pattern
 

@@ -20,6 +20,7 @@
 This module contains the ``DebugREPL`` class
 """
 
+import os
 import sys
 
 from term_background import is_dark_background
@@ -40,7 +41,14 @@ from trepan.misc import option_set
 pymathics.trepan.lib.core.IGNORE_CODE.add(DebugEvaluation.eval.__code__)
 
 is_dark_bg = is_dark_background()
-default_style = "zenburn" if is_dark_bg else "colorful"
+
+# If TREPAN_PYGMENTS_STYLE has been set, use that as the defalt.
+pygments_style_from_environment = os.environ.get("TREPAN_PYGMENTS_STYLE", None)
+
+if pygments_style_from_environment is not None:
+    default_style = pygments_style_from_environment
+else:
+    default_style = "zenburn" if is_dark_bg else "tango"
 
 try:
     from readline import get_line_buffer

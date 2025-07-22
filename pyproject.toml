@@ -8,8 +8,9 @@ requires = [
   "pygments",
   "mathics-pygments",
   "trepan3k",
-  "Mathics_Scanner",
-  "Mathics3",
+  # Until the 9.0 release...
+  "Mathics_Scanner @ git+https://github.com/Mathics3/mathics-scanner.git@master",
+  "Mathics3 @ git+https://github.com/Mathics3/mathics-core.git@master"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -25,7 +26,7 @@ dependencies = [
 ]
 requires-python = ">=3.9"
 readme = "README.rst"
-license = {text = "GPL"}
+license = "GPL-3.0-or-later"
 keywords = ["Mathematica", "Wolfram", "Interpreter", "Shell", "Math", "CAS"]
 maintainers = [
     {name = "Mathics Group", email = "mathics-devel@googlegroups.com"},
@@ -33,7 +34,6 @@ maintainers = [
 classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
