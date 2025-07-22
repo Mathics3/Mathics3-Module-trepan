@@ -315,11 +315,15 @@ def get_operator_precedence(element) -> int:
     if not isinstance(element, (Expression, ExpressionPattern)):
         return NO_PARENTHESIS_PRECEDENCE
     head = element.head
-    operator_name = head.short_name
-    if operator_name in all_operators:
-        operator_str = operator_to_ascii.get(operator_name, None)
-        if operator_str is not None:
-            return all_operators[operator_name]
+
+    # In an M-expression, head  might not have a Symbol head.
+    # So "short_name" might not be applicable.
+    if hasattr(head, "short_name"):
+        operator_name = head.short_name
+        if operator_name in all_operators:
+            operator_str = operator_to_ascii.get(operator_name, None)
+            if operator_str is not None:
+                return all_operators[operator_name]
 
     return NO_PARENTHESIS_PRECEDENCE
 
