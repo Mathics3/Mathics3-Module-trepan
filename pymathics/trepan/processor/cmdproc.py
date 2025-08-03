@@ -27,6 +27,7 @@ import traceback
 
 # Note: the module name pre 3.2 is repr
 from reprlib import Repr
+from types import FrameType
 from typing import Tuple
 
 import pyficache
@@ -37,6 +38,7 @@ import trepan.lib.thred as Mthread
 import trepan.misc as Mmisc
 from mathics.core.interrupt import AbortInterrupt
 from mathics.eval.tracing import print_evaluate
+from mathics.eval.stackframe import get_eval_Expression
 from mathics_scanner.location import get_location_file_line
 from pygments.console import colorize
 from tracer import EVENT2SHORT
@@ -471,6 +473,7 @@ class CommandProcessor(Processor):
 
         # These values updated on entry. Set initial values.
         self.curframe = None
+        self.eval_expression = None  # Expression being evaluated, if it can be found.
         self.event = None
         self.event_arg = None
         self.frame = None
@@ -543,7 +546,9 @@ class CommandProcessor(Processor):
             self.prompt_str = colorize("underline", self.prompt_str)
         self.prompt_str += " "
 
-    def event_processor(self, frame, event, event_arg, prompt="Mathics3 Debug"):
+    def event_processor(
+        self, frame: FrameType, event, event_arg, prompt="Mathics3 Debug"
+    ):
         """
         command event processor: reading a commands do something with them.
 
@@ -562,7 +567,7 @@ class CommandProcessor(Processor):
 
         filename = frame.f_code.co_filename
         lineno = frame.f_lineno
-
+        self.eval_expression = get_eval_Expression()
         self.return_value = None
 
         if event == "evaluate-result":

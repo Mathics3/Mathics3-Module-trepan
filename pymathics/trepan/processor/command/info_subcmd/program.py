@@ -16,7 +16,7 @@
 
 # Our local modules
 from trepan.processor.command.base_subcmd import DebuggerSubcommand
-from pymathics.trepan.lib.format import pygments_format
+from pymathics.trepan.lib.format import format_element, pygments_format
 from pymathics.trepan.lib.location import format_location
 from pymathics.trepan.lib.stack import print_stack_trace
 
@@ -55,6 +55,10 @@ class InfoProgram(DebuggerSubcommand):
             self.msg(mess)
             return
 
+        if (eval_expression := self.proc.eval_expression) is not None:
+            eval_expression_str = format_element(eval_expression, allow_python=False, use_operator_form=True)
+            formatted_expression = pygments_format(eval_expression_str, style=style)
+            self.msg(f"Expression: {formatted_expression}")
 
         if self.proc.return_value is not None:
             return_str = str(self.proc.return_value)
