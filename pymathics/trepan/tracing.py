@@ -9,7 +9,8 @@ import mathics.eval.tracing as eval_tracing
 from mathics.core.evaluation import Evaluation
 from mathics.core.rules import FunctionApplyRule
 from mathics.core.symbols import strip_context
-from mathics.eval.tracing import skip_trivial_evaluation
+from mathics.eval.tracing import is_performing_rewrite, skip_trivial_evaluation
+from mathics.eval.stackframe import find_Mathics3_evaluation_method, get_eval_Expression
 from trepan.debugger import Trepan
 
 from pymathics.trepan.lib.format import format_element, pygments_format
@@ -25,6 +26,7 @@ TraceEventNames = (
     "evaluation",  # calling an evaluate() method, e.g. Expression.evaluate()
     "evalMethod",  # calling a built-in evaluation method Class.eval_xxx()
     "evalFunction",  # calling an evaluation  eval_Xxx() of mathics.eval
+    "interrupt",  # entered via an interrupt, e.g. Ctrl-C
     "mpmath",  # traps calls to mpmath functions
     "parse",  # traps calls to parse()
 )
@@ -147,24 +149,31 @@ def call_event_debug(event: TraceEvent, fn: Callable, *args) -> bool:
 
     msg = dbg.core.processor.msg
 
-    if event == TraceEvent.apply:
-        # args[0] has the expression to be called
-        style = dbg.settings["style"]
-        mathics_str = format_element(args[0])
-        msg(f"{event.name}: {pygments_format(mathics_str, style)}")
-    else:
-        if type(fn) is type or inspect.ismethod(fn) or inspect.isfunction(fn):
-            name = f"{fn.__module__}.{fn.__qualname__}"
-        else:
-            name = str(fn)
-        msg(f"{event.name} call  : {name}{args[:3]}")
-
     # Note: there may be a temptation to go back a frame, i.e. use
     # `f_back` to `current_frame`. However, keeping the frame `call_event_debug`,
     # it is easy for trace_dispatch to detect this a known caller
     # and remove a few *more* frames to the traced calls that led up
     # to calling us.
     current_frame = inspect.currentframe()
+
+    if event == TraceEvent.apply:
+        # args[0] has the expression to be called
+        style = dbg.settings["style"]
+        mathics_str = format_element(args[0])
+        msg(f"{event.name}: {pygments_format(mathics_str, style)}")
+    elif event == TraceEvent.interrupt:
+        current_frame = fn
+        style = dbg.settings["style"]
+        eval_expression = get_eval_Expression()
+        if eval_expression is not None:
+            mathics_str = format_element(eval_expression)
+            msg(f"\n{event.name}: {pygments_format(mathics_str, style)}")
+    else:
+        if type(fn) is type or inspect.ismethod(fn) or inspect.isfunction(fn):
+            name = f"{fn.__module__}.{fn.__qualname__}"
+        else:
+            name = str(fn)
+        msg(f"{event.name} call  : {name}{args[:3]}")
 
     # Remove any "Tracing." from event string.
     event_str = str(event).split(".")[-1]
@@ -406,14 +415,12 @@ def trace_evaluate(
             location = e.location
             break
 
-    mess = None
     if orig_expr is not None:
         formatted_orig_expr = format_element(orig_expr, use_operator_form=True)
-        fn_name = fn.__name__ if hasattr(fn, "__name__") else None
-        if fn_name == "rewrite_apply_eval_step":
+        if is_performing_rewrite(fn):
             if orig_expr != expr[0]:
                 if status == "Returning":
-                    if expr[1]:
+                    if expr[1] and evaluation.definitions.trace_show_rewrite:
                         status = "Rewriting"
                         arrow = " -> "
                     else:
@@ -430,15 +437,22 @@ def trace_evaluate(
                 )
         else:
             if status == "Returning" and isinstance(expr, tuple):
+                if not evaluation.definitions.trace_show_rewrite:
+                    return
                 status = "Replacing"
                 expr = expr[0]
+            elif not evaluation.definitions.trace_evaluation:
+                return
             formatted_expr = format_element(
                 expr, allow_python=True, use_operator_form=True
             )
             assign_str = f"{formatted_orig_expr} -> {formatted_expr}"
             show_location(location)
             msg(f"{indents}{status:10}: " f"{pygments_format(assign_str, style)}")
-    elif not hasattr(fn, "__name__") or fn.__name__ != "rewrite_apply_eval_step":
+
+    elif not is_performing_rewrite(fn):
+        if not evaluation.definitions.trace_evaluation:
+            return
         formatted_expr = format_element(expr, use_operator_form=True, allow_python=True)
         show_location(location)
         msg(f"{indents}{status:10}: {pygments_format(formatted_expr, style)}")

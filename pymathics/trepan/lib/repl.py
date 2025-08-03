@@ -89,6 +89,7 @@ class DebugREPL:
             "evaluate-entry",  # before evaluate()
             "evaluate-result",  # after evaluate()
             "evalMethod",  # calling a built-in evaluation
+            "interrupt",  # interrupt, e.g. Ctrl-C
             # method Class.eval_xxx()
             "debugger",  # explicit call via "Debugger"
             "mpmath",  # mpmath call

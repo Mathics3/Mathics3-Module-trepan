@@ -35,6 +35,7 @@ import trepan.lib.file as Mfile
 import trepan.lib.stack as Mstack
 import trepan.lib.thred as Mthread
 import trepan.misc as Mmisc
+from mathics.core.interrupt import AbortInterrupt
 from mathics.eval.tracing import print_evaluate
 from mathics_scanner.location import get_location_file_line
 from pygments.console import colorize
@@ -429,6 +430,7 @@ class CommandProcessor(Processor):
         self.event2short["evalFunction"] = "@f"
         self.event2short["brkpt"] = "xx"
         self.event2short["debugger"] = "$ "
+        self.event2short["interrupt"] = "^C"
         self.event2short["mpmath"] = "mp"
         self.event2short["SymPy"] = "SP"
         self.event2short["Get"] = "<<"
@@ -961,7 +963,7 @@ class CommandProcessor(Processor):
                             result = cmd_obj.run(args)
                             if result:
                                 return result
-                        except DebuggerQuitException:
+                        except (AbortInterrupt, DebuggerQuitException):
                             # Let these exceptions propagate through
                             raise
                         except Exception:

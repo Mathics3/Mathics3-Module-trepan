@@ -8,6 +8,7 @@ requires = [
   "pygments",
   "mathics-pygments",
   "trepan3k",
+  "Mathics3-Module-Base",
   # Until the 9.0 release...
   "Mathics_Scanner @ git+https://github.com/Mathics3/mathics-scanner.git@master",
   "Mathics3 @ git+https://github.com/Mathics3/mathics-core.git@master"

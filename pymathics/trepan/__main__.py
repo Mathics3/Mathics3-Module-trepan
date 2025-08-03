@@ -25,6 +25,7 @@ from mathics.core.symbols import SymbolFalse, SymbolTrue
 
 from pymathics.trepan.lib.exception import DebuggerQuitException
 from pymathics.trepan.tracing import (
+    TraceEvent,
     TraceEventNames,
     # apply_builtin_box_fn_traced,
     apply_builtin_fn_print,
@@ -382,3 +383,17 @@ class TraceActivate(Builtin):
                 tracing.run_mpmath = (
                     tracing.run_mpmath_traced if event_is_traced else tracing.run_fast
                 )
+
+def Mathics3_trepan_signal_handler(sig, interrupted_frame):
+    """
+    Custom signal handler for SIGINT (Ctrl+C).
+    """
+    try:
+        call_event_debug(TraceEvent.interrupt, interrupted_frame)
+    except DebuggerQuitException:
+        # Go back into mathics.
+        pass
+
+
+import signal
+signal.signal(signal.SIGINT, Mathics3_trepan_signal_handler)

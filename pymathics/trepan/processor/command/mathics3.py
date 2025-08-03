@@ -1,4 +1,4 @@
-#  Copyright (C) 2024 Rocky Bernstein
+#  Copyright (C) 2024-2025 Rocky Bernstein
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 import subprocess
 from mathics.core.evaluation import Evaluation
 
-from mathics.main import TerminalOutput, TerminalShell, show_echo
+from mathics.__main__ import TerminalOutput, TerminalShell, show_echo
 
 # Our local modules
 from pymathics.trepan.processor.command.base_cmd import DebuggerCommand
