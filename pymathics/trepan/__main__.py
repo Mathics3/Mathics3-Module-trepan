@@ -14,7 +14,7 @@ import mathics.eval.files_io.files as io_files
 import mathics.eval.tracing as tracing
 import mathics_scanner.location
 import pymathics.trepan.tracing as trepan_tracing
-
+import signal
 
 from mathics.core.atoms import String
 from mathics.core.builtin import Builtin
@@ -22,8 +22,10 @@ from mathics.core.evaluation import Evaluation
 from mathics.core.list import ListExpression
 from mathics.core.rules import FunctionApplyRule
 from mathics.core.symbols import SymbolFalse, SymbolTrue
+from mathics.eval.stackframe import get_eval_Expression
 
 from pymathics.trepan.lib.exception import DebuggerQuitException
+from pymathics.trepan.lib.format import format_element
 from pymathics.trepan.tracing import (
     TraceEvent,
     TraceEventNames,
@@ -384,7 +386,7 @@ class TraceActivate(Builtin):
                     tracing.run_mpmath_traced if event_is_traced else tracing.run_fast
                 )
 
-def Mathics3_trepan_signal_handler(sig, interrupted_frame):
+def Mathics3_trepan_signal_handler(sig: int, interrupted_frame):
     """
     Custom signal handler for SIGINT (Ctrl+C).
     """
@@ -395,5 +397,20 @@ def Mathics3_trepan_signal_handler(sig, interrupted_frame):
         pass
 
 
-import signal
-signal.signal(signal.SIGINT, Mathics3_trepan_signal_handler)
+def Mathics3_trepan_USR1_handler(sig: int, _):
+    """
+    Custom signal handler for SIGUSR1. When we get this signal, try to
+    find an Expression that is getting evaluated, and print that. Then
+    continue.
+    """
+    print(f"USR1 ({sig}) interrupt")
+    if (eval_expression := get_eval_Expression()) is not None:
+        eval_expression_str = format_element(eval_expression, allow_python=False, use_operator_form=True)
+        print(f"Expression: {eval_expression_str}")
+
+
+def setup_signal_handler():
+    signal.signal(signal.SIGINT, Mathics3_trepan_signal_handler)
+    signal.signal(signal.SIGUSR1, Mathics3_trepan_USR1_handler)
+
+setup_signal_handler()
