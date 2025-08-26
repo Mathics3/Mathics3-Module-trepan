@@ -53,9 +53,8 @@ To get a list of all debugger commands::
 
     (Mathics3 Debug) help *
     List of all debugger commands:
-        alias      down   help  mathics3      reload  trepan3k
-        backtrace  eval   info  printelement  set     up
-        continue   frame  kill  python        show
+        abort  backtrace  down  frame   help  kill      printelement  quit    set   trepan3k
+        alias  continue   eval  handle  info  mathics3  python        reload  show  up
 
 When you are done inspecting things, run ``continue`` (or short-hand ``c``) to resume execution::
 
