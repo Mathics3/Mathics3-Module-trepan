@@ -10,7 +10,7 @@ from mathics.core.evaluation import Evaluation
 from mathics.core.rules import FunctionApplyRule
 from mathics.core.symbols import strip_context
 from mathics.eval.tracing import is_performing_rewrite, skip_trivial_evaluation
-from mathics.eval.stackframe import find_Mathics3_evaluation_method, get_eval_Expression
+from mathics.eval.stackframe import get_eval_Expression
 from trepan.debugger import Trepan
 
 from pymathics.trepan.lib.format import format_element, pygments_format
@@ -403,6 +403,7 @@ def trace_evaluate(
         dbg = DebugREPL()
 
     msg = dbg.core.processor.msg
+    msg_nocr = dbg.core.processor.msg_nocr
     style = dbg.settings["style"]
 
     if skip_trivial_evaluation(expr, status, orig_expr):
@@ -429,7 +430,7 @@ def trace_evaluate(
                     arrow = " = "
                 formatted_expr = format_element(expr[0], use_operator_form=True)
                 show_location(location)
-                msg(
+                msg_nocr(
                     f"{indents}{status:10}: "
                     + pygments_format(
                         formatted_orig_expr + arrow + formatted_expr, style
@@ -446,16 +447,18 @@ def trace_evaluate(
             formatted_expr = format_element(
                 expr, allow_python=True, use_operator_form=True
             )
+            if status == "Replacing" and formatted_expr == formatted_orig_expr:
+                return
             assign_str = f"{formatted_orig_expr} -> {formatted_expr}"
             show_location(location)
-            msg(f"{indents}{status:10}: " f"{pygments_format(assign_str, style)}")
+            msg_nocr(f"{indents}{status:10}: " f"{pygments_format(assign_str, style)}")
 
     elif not is_performing_rewrite(fn):
         if not evaluation.definitions.trace_evaluation:
             return
         formatted_expr = format_element(expr, use_operator_form=True, allow_python=True)
         show_location(location)
-        msg(f"{indents}{status:10}: {pygments_format(formatted_expr, style)}")
+        msg_nocr(f"{indents}{status:10}: {pygments_format(formatted_expr, style)}")
 
 
 # Smash TraceEvaluation's print routine

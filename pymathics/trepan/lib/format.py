@@ -47,6 +47,7 @@ from mathics.core.systemsymbols import (
     SymbolPattern,
     SymbolRule,
     SymbolRuleDelayed,
+    SymbolSlot,
 )
 from mathics_pygments.lexer import MathematicaLexer
 from pygments import highlight
@@ -197,15 +198,20 @@ def format_element(
         # Expression[List, Integer1, Integer2] instead of
         # ListExpression[Integer1, Integer2]
 
+        if head is SymbolSlot:
+            if len(element.elements) == 0:
+                breakpoint()
+                return format_element("#")
+            return f"#{format_element(element.elements[0])}"
         if head is SymbolList:
             return format_list(element.elements)
-        elif head is SymbolPattern and len(element.elements) == 2:
+        if head is SymbolPattern and len(element.elements) == 2:
             return format_pattern(element.elements)
-        elif head is SymbolRule:
+        if head is SymbolRule:
             return f"{format_element(element.elements[0], use_operator_form=use_operator_form)} -> {format_element(element.elements[1], use_operator_form=use_operator_form)}"
-        elif head is SymbolRuleDelayed:
+        if head is SymbolRuleDelayed:
             return f"{format_element(element.elements[0], use_operator_form=use_operator_form)} :> {format_element(element.elements[1], use_operator_form=use_operator_form)}"
-        elif head in (SymbolBlank, SymbolBlankNullSequence, SymbolBlankSequence):
+        if head in (SymbolBlank, SymbolBlankNullSequence, SymbolBlankSequence):
             if head is SymbolBlank:
                 name = "_"
             elif head is SymbolBlankSequence:
