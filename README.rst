@@ -99,13 +99,9 @@ Now let's do the same thing but set the value of ``x``::
 
    In[5]:= (x + 1) ^ 2
    Evaluating: Power[Plus[x, 1], 2]
-
      Evaluating: Plus[x, 1]
-
        Returning: x = 3
-
      Returning: Plus[x, 1] = 4
-
    Returning: Power[Plus[x, 1], 2] = 16
 
    Out[5]= 16
