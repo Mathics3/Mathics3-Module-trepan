@@ -16,7 +16,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "Mathics3-trepan"
+name = "Mathics3-Module-trepan"
 description = 'Mathics3 Debugger Module based on trepan debuggers'
 dependencies = [
         "Mathics_Scanner",
@@ -36,7 +36,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -50,8 +49,8 @@ classifiers = [
 dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/Mathics3/Mathics3-trepan"
-Downloads = "https://github.com/Mathics3/Mathics3-trepan/releases"
+Homepage = "https://github.com/Mathics3/Mathics3-Module-trepan"
+Downloads = "https://github.com/Mathics3/Mathics3-Module-trepan/releases"
 
 [project.optional-dependencies]
 dev = [

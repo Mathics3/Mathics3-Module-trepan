@@ -1,5 +1,5 @@
 #!/bin/bash
-PACKAGE=Mathics3-trepan
+PACKAGE=Mathics3-Module-trepan
 
 # FIXME put some of the below in a common routine
 function finish {
