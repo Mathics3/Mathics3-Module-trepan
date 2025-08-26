@@ -111,7 +111,7 @@ Here, the return values have the computed Integer values from evaluation, as you
 DebugEvaluation
 +++++++++++++++
 
-``DebugEvaluation`` is like ``TraceEvaluation`` but instead of displaying expression information, we stop inside a a gdb-like debugger, or rather a trepan-like debugger. See https://github.com/Trepan-Debugger for other such gdb-like debuggers. I use this debugger base because I am familiar with the code, and it was written in a way that was intended to be easily adapted to other programming languages.
+``DebugEvaluation`` is like ``TraceEvaluation``, but instead of displaying expression information, we stop inside a gdb-like debugger, or rather a trepan-like debugger. See https://github.com/Trepan-Debugger for other such gdb-like debuggers. I use this debugger base because I am familiar with the code, and it was written in a way that was intended to be easily adapted to other programming languages.
 
 
 
