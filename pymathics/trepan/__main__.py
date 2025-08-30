@@ -53,6 +53,7 @@ EVENT_OPTIONS: Dict[str, str] = {
     "evaluation": "False",
     "evalMethod": "False",
     "evalFunction": "False",
+    "interrupt": "False",
     "mpmath": "False",
     "parse": "False",
 }
