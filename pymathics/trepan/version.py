@@ -5,11 +5,4 @@
 # well as importing into Python. That's why there is no
 # space around "=" below.
 # fmt: off
-__version__="1.0.2.dev0"  # noqa
-
-pymathics_version_data = {
-    "author": "Rocky Bernstein",
-    "version": __version__,
-    "name": "Debugger",
-    "requires": [],
-}
+__version__="9.0.0"  # noqa
