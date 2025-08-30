@@ -1,0 +1,229 @@
+--- ChangeLog	2025-08-30 11:20:57.309641535 -0400
++++ ChangeLog-spell-corrected	2025-08-30 11:19:33.784682545 -0400
+@@ -20,7 +20,7 @@
+ 
+ 2025-08-26  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/trepan/lib/format.py, pymathics/trepan/tracing.py: 
++	* pymathics/trepan/lib/format.py, pymathics/trepan/tracing.py:
+ 	Improve TraceEvaluation and format Handle Slot[n] -> #n Remove extraneous:   Replace: x -> x   Newlines between trace output
+ 
+ 2025-08-24  rocky <rb@dustyfeet.com>
+@@ -67,7 +67,7 @@
+ 
+ 2025-07-01  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/trepan/__main__.py, pymathics/trepan/lib/location.py: 
++	* pymathics/trepan/__main__.py, pymathics/trepan/lib/location.py:
+ 	Fix bug in use of filename in location ..  and also set $TrackLocations
+ 
+ 2025-06-29  rocky <rb@dustyfeet.com>
+@@ -75,14 +75,14 @@
+ 	* pymathics/trepan/processor/cmdproc.py,
+ 	pymathics/trepan/processor/command/info_subcmd/program.py,
+ 	pymathics/trepan/processor/command/info_subcmd/return.py: tweak info
+-	program and info return info program: show Mathics3 expression if that exists info reutrn:
++	program and info return info program: show Mathics3 expression if that exists info return:
+ 	note that a None return value on a no-return keeps execution the
+ 	same
+ 
+ 2025-06-29  rocky <rb@dustyfeet.com>
+ 
+ 	* pymathics/trepan/lib/format.py, pymathics/trepan/lib/location.py,
+-	pymathics/trepan/processor/cmdproc.py, pymathics/trepan/tracing.py: 
++	pymathics/trepan/processor/cmdproc.py, pymathics/trepan/tracing.py:
+ 	More work on location display Move location formatting to its own module. pymathics.lib.format is
+ 	too large so split this up.  location.py when we don't need file/line tracking colorize files and
+ 	line and add column numbers.
+@@ -91,7 +91,7 @@
+ 
+ 	* pymathics/trepan/lib/format.py,
+ 	pymathics/trepan/processor/cmdproc.py,
+-	pymathics/trepan/processor/location.py, pymathics/trepan/tracing.py: 
++	pymathics/trepan/processor/location.py, pymathics/trepan/tracing.py:
+ 	Show locations on TraceEvaluation[]
+ 
+ 2025-06-29  rocky <rb@dustyfeet.com>
+@@ -133,7 +133,7 @@
+ 2025-06-23  rocky <rb@dustyfeet.com>
+ 
+ 	* pymathics/trepan/__main__.py,
+-	pymathics/trepan/debug_evaluation.py, pymathics/trepan/tracing.py: 
++	pymathics/trepan/debug_evaluation.py, pymathics/trepan/tracing.py:
+ 	Fix some spelling typos
+ 
+ 2025-06-23  rocky <rb@dustyfeet.com>
+@@ -149,7 +149,7 @@
+ 
+ 2025-06-15  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/trepan/lib/format.py, pymathics/trepan/tracing.py: 
++	* pymathics/trepan/lib/format.py, pymathics/trepan/tracing.py:
+ 	Improve formatting for operators ...  and correct DebugEvaluation[]
+ 
+ 2025-06-14  rocky <rb@dustyfeet.com>
+@@ -160,7 +160,7 @@
+ 2025-06-08  rocky <rb@dustyfeet.com>
+ 
+ 	* pymathics/trepan/processor/command/quit.py: Adapt quit command for
+-	DebugEvaluate and Debugger.  Remove confirmation, since this is not somehting as drastic as quit
++	DebugEvaluate and Debugger.  Remove confirmation, since this is not something as drastic as quit
+ 	in a debugger.
+ 
+ 2025-06-08  rocky <rb@dustyfeet.com>
+@@ -182,7 +182,7 @@
+ 2025-06-07  rocky <rb@dustyfeet.com>
+ 
+ 	* pymathics/trepan/lib/core.py, pymathics/trepan/lib/repl.py,
+-	pymathics/trepan/processor/cmdproc.py, pymathics/trepan/tracing.py: 
++	pymathics/trepan/processor/cmdproc.py, pymathics/trepan/tracing.py:
+ 	Start DebugEvaluation...  Needs a change in mathics.core.eval
+ 
+ 2025-06-06  rocky <rb@dustyfeet.com>
+@@ -239,7 +239,7 @@
+ 
+ 2025-01-17  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/trepan/__main__.py, pymathics/trepan/stacktrace.py: 
++	* pymathics/trepan/__main__.py, pymathics/trepan/stacktrace.py:
+ 	Track mathics-core eval docstring change
+ 
+ 2025-01-13  rocky <rb@dustyfeet.com>
+@@ -286,7 +286,7 @@
+ 
+ 2024-12-15  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/trepan/tracing.py: Upgrade automatially TraceEvaluation
++	* pymathics/trepan/tracing.py: Upgrade automatically TraceEvaluation
+ 
+ 2024-12-15  rocky <rb@dustyfeet.com>
+ 
+@@ -322,7 +322,7 @@
+ 
+ 2024-12-02  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/trepan/lib/repl.py, pymathics/trepan/lib/sighandler.py: 
++	* pymathics/trepan/lib/repl.py, pymathics/trepan/lib/sighandler.py:
+ 	Print a nice Mathics stack for print handler
+ 
+ 2024-12-02  rocky <rb@dustyfeet.com>
+@@ -448,7 +448,7 @@
+ 
+ 2024-11-17  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/debugger/__main__.py, pymathics/debugger/lib/core.py: 
++	* pymathics/debugger/__main__.py, pymathics/debugger/lib/core.py:
+ 	Add in mmatera's observation..  about the use of $Context and $ContextPath in the code and its
+ 	reduced need for "short=True"
+ 
+@@ -506,7 +506,7 @@
+ 
+ 2024-10-14  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/debugger/lib/format.py: Improve printexpression --- Handle printin Expressions[] that haven't been converted to a
++	* pymathics/debugger/lib/format.py: Improve printexpression --- Handle printing Expressions[] that haven't been converted to a
+ 	specialize Python Object internal form.
+ 
+ 2024-10-13  rocky <rb@dustyfeet.com>
+@@ -529,7 +529,7 @@
+ 2024-10-02  rocky <rb@dustyfeet.com>
+ 
+ 	* pymathics/debugger/__main__.py, pymathics/debugger/lib/core.py,
+-	pymathics/debugger/lib/stack.py, pymathics/debugger/tracing.py: 
++	pymathics/debugger/lib/stack.py, pymathics/debugger/tracing.py:
+ 	Support stop on specific functions in events...  In Sympy and mpmath, we support stopping on the Sympy, or mpmath
+ 	function name.  In Get we support stopping on getting a particular file name.
+ 
+@@ -551,7 +551,7 @@
+ 	pymathics/debugger/processor/command/info_subcmd/frame.py,
+ 	pymathics/debugger/processor/command/set_subcmd/event.py,
+ 	pymathics/debugger/processor/command/show_subcmd/event.py: More info
+-	in bt...  also improve "info frame" and setting/reportign set/show event for
++	in bt...  also improve "info frame" and setting/reporting set/show event for
+ 	Get
+ 
+ 2024-09-27  R. Bernstein <rocky@users.noreply.github.com>
+@@ -585,7 +585,7 @@
+ 
+ 2024-09-22  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/debugger/processor/command/{mathics.py => mathics3.py}: 
++	* pymathics/debugger/processor/command/{mathics.py => mathics3.py}:
+ 	mathics -> mathics3
+ 
+ 2024-09-21  rocky <rb@dustyfeet.com>
+@@ -595,7 +595,7 @@
+ 	pymathics/debugger/processor/command/eval.py,
+ 	pymathics/debugger/processor/command/mathics.py,
+ 	pymathics/debugger/processor/command/printelement.py,
+-	pymathics/debugger/processor/frame.py: Misc small improvements...  * Revise soem functions to make it more amenable to adding a
++	pymathics/debugger/processor/frame.py: Misc small improvements...  * Revise some functions to make it more amenable to adding a
+ 	"return" command * Proper error return on debugger eval command * add find_builtin() to fund an eval() frame
+ 
+ 2024-09-21  rocky <rb@dustyfeet.com>
+@@ -652,7 +652,7 @@
+ 	pymathics/debugger/lib/stack.py,
+ 	pymathics/debugger/processor/command/printelement.py,
+ 	pymathics/debugger/processor/command/set_subcmd/event.py,
+-	pymathics/debugger/processor/command/show_subcmd/event.py: 
++	pymathics/debugger/processor/command/show_subcmd/event.py:
+ 	do_replace -> apply_rule (for now) ...  stack.py: format apply and eval calls using Mathics3 formatting
+ 
+ 2024-09-07  rocky <rb@dustyfeet.com>
+@@ -668,7 +668,7 @@
+ 2024-09-07  rocky <rb@dustyfeet.com>
+ 
+ 	* pymathics/debugger/processor/command/set_subcmd/event.py,
+-	pymathics/debugger/processor/command/show_subcmd/event.py: 
++	pymathics/debugger/processor/command/show_subcmd/event.py:
+ 	Fix/Improve "set/show event"
+ 
+ 2024-09-06  rocky <rb@dustyfeet.com>
+@@ -709,7 +709,7 @@
+ 	pymathics/debugger/processor/command/frame.py,
+ 	pymathics/debugger/processor/command/up.py,
+ 	pymathics/debugger/processor/frame.py: Some frame/up/down -b
+-	improvments...  More need to happen though
++	improvements...  More need to happen though
+ 
+ 2024-09-03  rocky <rb@dustyfeet.com>
+ 
+@@ -734,7 +734,7 @@
+ 
+ 2024-09-01  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/debugger/processor/command/info_subcmd/program.py: 
++	* pymathics/debugger/processor/command/info_subcmd/program.py:
+ 	color->style in formatting...  trepan3k API changes here
+ 
+ 2024-09-01  rocky <rb@dustyfeet.com>
+@@ -750,7 +750,7 @@
+ 
+ 2024-08-26  rocky <rb@dustyfeet.com>
+ 
+-	* setup.py: Bump minimun trepan3k version allowed...  its aPI has changed slightly
++x	* setup.py: Bump minimum trepan3k version allowed...  its API has changed slightly
+ 
+ 2024-08-26  R. Bernstein <rocky@users.noreply.github.com>
+ 
+@@ -769,7 +769,7 @@
+ 
+ 2024-08-25  rocky <rb@dustyfeet.com>
+ 
+-	* pymathics/debugger/processor/command/info_subcmd/program.py: 
++	* pymathics/debugger/processor/command/info_subcmd/program.py:
+ 	"mathics" option in callstack is now "builtin"
+ 
+ 2024-08-25  rocky <rb@dustyfeet.com>
+@@ -904,10 +904,9 @@
+ 	pymathics/debugger/processor/command/show_subcmd/listsize.py,
+ 	pymathics/debugger/processor/command/show_subcmd/style.py,
+ 	pymathics/debugger/processor/command/show_subcmd/styles.py,
+-	pymathics/debugger/processor/subcmd.py, pymathics/debugger/repl.py: 
++	pymathics/debugger/processor/subcmd.py, pymathics/debugger/repl.py:
+ 	First working REPL
+ 
+ 2024-08-19  rocky <rb@dustyfeet.com>
+ 
+ 	* Starting Mathics3 debugger project
+-

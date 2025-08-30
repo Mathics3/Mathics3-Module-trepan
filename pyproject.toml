@@ -7,11 +7,10 @@ requires = [
   "sympy",
   "pygments",
   "mathics-pygments",
-  "trepan3k",
+  "trepan3k >= 1.4.0",
   "Mathics3-Module-Base",
-  # Until the 9.0 release...
-  "Mathics_Scanner @ git+https://github.com/Mathics3/mathics-scanner.git@master",
-  "Mathics3 @ git+https://github.com/Mathics3/mathics-core.git@master"
+  "Mathics_Scanner >= 2.0.0"
+  "Mathics3 >= 9.0.0'
 ]
 build-backend = "setuptools.build_meta"
 
@@ -19,13 +18,13 @@ build-backend = "setuptools.build_meta"
 name = "Mathics3-Module-trepan"
 description = 'Mathics3 Debugger Module based on trepan debuggers'
 dependencies = [
-        "Mathics_Scanner",
-        "Mathics3",
+        "Mathics_Scanner >= 2.0.0",
+        "Mathics3 >= 9.0.0",
         "Mathics3-Module-Base",
         "mathics-pygments",
         "trepan3k>=1.4.0",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.rst"
 license = "GPL-3.0-or-later"
 keywords = ["Mathematica", "Wolfram", "Interpreter", "Shell", "Math", "CAS"]
