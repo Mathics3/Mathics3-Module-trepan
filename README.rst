@@ -10,7 +10,7 @@ Mathics3 Module Examples
 Loading Module and getting help
 +++++++++++++++++++++++++++++++
 
-To enable debugging in Mathics3, install ``mathics3-trepan``.
+To enable debugging in Mathics3, install ``Mathics3-Module-trepan``.
 Inside a mathics3 session run ``LoadModule["pymathics.trepan"]``.
 
 You can then force a call to the debugger using Mathics3 builtin function ``Debugger[]``.
@@ -19,7 +19,7 @@ Extensive help is available in the debugger using the ``help`` command.
 
 Here is an example of this and calling ``help``:
 
-.. image:: https://github.com/Mathics3/mathics3-debugger/blob/master/screenshots/help-example.png
+.. image:: https://github.com/Mathics3/Mathics3-Module-trepan/blob/master/screenshots/help-example.png
 
 
 Stopping on certain Mathics3 call events
@@ -32,7 +32,7 @@ After loading Next, you may want to set up events that trigger entering the debu
 
 Other events include: "Debugger", "Get", "Numpy", "SymPy", "apply", "evalMethod", and "evaluation".
 
-In the above, ``mpmath->True`` goes into the debugger anytime an mpmath function is called.
+In the above, ``mpmath->True`` goes into the debugger anytime an ``mpmath`` function is called.
 ``Exp[1.0]`` is such a function::
 
   In[3]:= Exp[1.0]
@@ -78,7 +78,7 @@ In contrast to ``DebugActivate``, ``TraceActivate`` prints or traces events.
 
 Now we are ready for some action:
 
-.. image:: https://github.com/Mathics3/mathics3-debugger/blob/master/screenshots/TraceEvaluation.png
+.. image:: https://github.com/Mathics3/Mathics3-Module-trepan/blob/master/screenshots/TraceEvaluation.png
 
 Above we trace before an ``evaluate()`` method call and also sometimes show the return value.
 
@@ -122,7 +122,7 @@ You can change the computation of a value instead of calling a Mathics3 built-in
 
 This is done using the ``set return`` command. Here is an example of that:
 
-.. image:: https://github.com/Mathics3/mathics3-debugger/blob/master/screenshots/traceback-with-Ctrl-C.png
+.. image:: https://github.com/Mathics3/Mathics3-Module-trepan/blob/master/screenshots/traceback-with-Ctrl-C.png
 
 
 
@@ -168,7 +168,7 @@ The debugger (and trepan3k) support signal handling. With this, you can set up a
 
 Here is an example:
 
-.. image:: https://github.com/Mathics3/mathics3-debugger/blob/master/screenshots/traceback-with-Ctrl-C.png
+.. image:: https://github.com/Mathics3/Mathics-Module-trepan/blob/master/screenshots/traceback-with-Ctrl-C.png
 
 
 Without the debugger, but with ``trepan3k`` installed, you can use ``Breakpoint[]``, and issue the ``handle`` command. You won't get as nice of a traceback, but it should still work.
