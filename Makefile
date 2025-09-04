@@ -18,6 +18,10 @@ clean:
 	$(PYTHON) ./setup.py $@
 
 
+#: Make distirbution: wheels, eggs, tarball
+dist:
+	./admin-tools/make-dist.sh
+
 #: Create a ChangeLog from git via git log and git2cl
 ChangeLog: rmChangeLog
 	git log --pretty --numstat --summary | $(GIT2CL) >$@

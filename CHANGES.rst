@@ -1,5 +1,12 @@
 CHANGES
 =======
+
+09/04/2025
+
+Rerelease to fix up botched packaging.
+
+=======
+
 08/30/2025
 
 Support Python 3.13. Remove support for Python 3.8 and Python 3.9.
