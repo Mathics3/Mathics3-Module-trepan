@@ -82,7 +82,7 @@ Now we are ready for some action:
 
 Above we trace before an ``evaluate()`` method call and also sometimes show the return value.
 
-To reduce unnecessary output, evaluations are performed only when the evaluation changes. In particular, above there is an evaluation of the Symbols "Power" and "Plus". The result of evaluating these is the same symbol. So we don't show either ``Evaluating: Power``or ``Returning: Power``. Similarly, we omit the same for ``Plus``.
+To reduce unnecessary output, evaluations are performed only when the evaluation changes. In particular, above there is an evaluation of the Symbols "Power" and "Plus". The result of evaluating these is the same symbol. So we don't show either ``Evaluating: Power`` or ``Returning: Power``. Similarly, we omit the same for ``Plus``.
 
 We also omit ``Returning: Plus[1, x]`` because ``Plus[1, x]`` is the same expression as went in.
 But notice we *do* show ``Returning: Plus[x, 1] = Plus[1, x]``. Here, the difference is that the order of the parameters got rearranged. Perhaps this is not interesting either, but currently, it is shown.
