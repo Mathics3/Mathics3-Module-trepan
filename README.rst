@@ -168,7 +168,7 @@ The debugger (and trepan3k) support signal handling. With this, you can set up a
 
 Here is an example:
 
-.. image:: https://github.com/Mathics3/Mathics-Module-trepan/blob/master/screenshots/traceback-with-Ctrl-C.png
+.. image:: https://github.com/Mathics3/Mathics3-Module-trepan/blob/master/screenshots/traceback-with-Ctrl-C.png
 
 
 Without the debugger, but with ``trepan3k`` installed, you can use ``Breakpoint[]``, and issue the ``handle`` command. You won't get as nice of a traceback, but it should still work.
