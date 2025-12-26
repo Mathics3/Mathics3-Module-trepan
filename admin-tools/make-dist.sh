@@ -21,7 +21,7 @@ cd ..
 source pymathics/trepan/version.py
 echo $__version__
 
-pyversion=3.13.5
+pyversion=3.13
 if ! pyenv local $pyversion ; then
     exit $?
 fi

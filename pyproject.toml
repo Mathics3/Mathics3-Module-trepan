@@ -10,7 +10,7 @@ requires = [
   "trepan3k >= 1.4.0",
   "Mathics3-Module-Base",
   "Mathics_Scanner >= 2.0.0",
-  "Mathics3 >= 9.0.0",
+  "Mathics3 > 9.0.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -19,10 +19,10 @@ name = "Mathics3-Module-trepan"
 description = 'Mathics3 Debugger Module based on trepan debuggers'
 dependencies = [
         "Mathics_Scanner >= 2.0.0",
-        "Mathics3 >= 9.0.0",
+        "Mathics3 > 9.0.0",
         "Mathics3-Module-Base",
         "mathics-pygments",
-        "trepan3k>=1.4.0",
+        "trepan3k>1.5.1",
 ]
 requires-python = ">=3.10"
 readme = "README.rst"

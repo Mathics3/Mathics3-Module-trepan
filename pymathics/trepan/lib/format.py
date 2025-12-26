@@ -19,7 +19,7 @@ from typing import Literal
 from mathics.builtin.patterns.basic import Blank, BlankNullSequence, BlankSequence
 from mathics.builtin.patterns.composite import Pattern, OptionsPattern
 from mathics.builtin.patterns.rules import RuleDelayed
-from mathics.core.atoms import Atom
+from mathics.core.symbols import Atom
 from mathics.core.builtin import Operator
 from mathics.core.element import BaseElement
 from mathics.core.expression import Expression
