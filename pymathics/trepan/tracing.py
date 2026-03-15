@@ -441,6 +441,7 @@ def trace_evaluate(
                 if not evaluation.definitions.trace_show_rewrite:
                     return
                 status = "Replacing"
+                # breakpoint()
                 expr = expr[0]
             elif not evaluation.definitions.trace_evaluation:
                 return
@@ -448,6 +449,7 @@ def trace_evaluate(
                 expr, allow_python=True, use_operator_form=True
             )
             if status == "Replacing" and formatted_expr == formatted_orig_expr:
+                # breakpoint()
                 return
             assign_str = f"{formatted_orig_expr} -> {formatted_expr}"
             show_location(location)

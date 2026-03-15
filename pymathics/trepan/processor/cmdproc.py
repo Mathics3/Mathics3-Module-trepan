@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#   Copyright (C) 2024-2025 Rocky Bernstein
+#   Copyright (C) 2024-2026 Rocky Bernstein
 #   <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -55,6 +55,10 @@ from pymathics.trepan.tracing import call_event_debug
 
 warned_file_mismatches = set()
 
+# Newer trepan3k doesn't support deparsing
+have_deparse_and_cache = False
+def deparse_and_cache(*args, **kwargs):
+    return None, None
 
 def get_srcdir():
     filename = osp.normcase(osp.dirname(osp.abspath(__file__)))
@@ -152,14 +156,15 @@ def print_location(proc_obj):
     # once and sometimes twice.
     remapped_file = None
     source_text = None
+    column_number = None
     while i_stack >= 0 and len(proc_obj.stack) > 0:
-        frame, lineno = proc_obj.stack[i_stack]
+        frame, line_number, column_number = proc_obj.stack[i_stack]
 
         # Before starting a program a location for a module with
         # line number 0 may be reported. Treat that as though
         # we were on the first line.
-        if frame.f_code.co_name == "<module>" and lineno == 0:
-            lineno = 1
+        if frame.f_code.co_name == "<module>" and line_number == 0:
+            line_number = 1
 
         i_stack -= 1
 
@@ -181,7 +186,7 @@ def print_location(proc_obj):
                     tempdir=proc_obj.settings("tempdir"),
                 )
                 pyficache.remap_file(filename, remapped)
-                filename, lineno = pyficache.unmap_file_line(filename, lineno)
+                filename, line_number = pyficache.unmap_file_line(filename, line_number)
                 pass
             pass
         elif "<string>" == filename:
@@ -218,7 +223,7 @@ def print_location(proc_obj):
             opts["style"] = proc_obj.settings("style")
 
         pyficache.update_cache(filename)
-        line = pyficache.getline(filename, lineno, opts)
+        line = pyficache.getline(filename, line_number, opts)
         if not line:
             if (
                 not source_text
@@ -233,8 +238,8 @@ def print_location(proc_obj):
                 temp_filename, name_for_code = deparse_and_cache(
                     co, proc_obj.errmsg, tempdir=tempdir
                 )
-                lineno = 1
-                # _, lineno = pyficache.unmap_file_line(temp_filename, lineno, True)
+                line_number = 1
+                # _, line_number = pyficache.unmap_file_line(temp_filename, line_number, True)
                 if temp_filename:
                     filename = temp_filename
                 pass
@@ -265,7 +270,7 @@ def print_location(proc_obj):
                     intf_obj.msg(f"remapped file {filename} to {remapped_file}")
 
                     pass
-            line = linecache.getline(filename, lineno, proc_obj.curframe.f_globals)
+            line = linecache.getline(filename, line_number, proc_obj.curframe.f_globals)
             if not line:
                 m = re.search("^<frozen (.*)>", filename)
                 if m and m.group(1):
@@ -279,13 +284,13 @@ def print_location(proc_obj):
                         remapped_file = sys.modules[remapped_file].__file__
                         pyficache.remap_file(filename, remapped_file)
                         line = linecache.getline(
-                            remapped_file, lineno, proc_obj.curframe.f_globals
+                            remapped_file, line_number, proc_obj.curframe.f_globals
                         )
                     else:
                         remapped_file = m.group(1)
                         code = proc_obj.curframe.f_code
                         filename, line = cmdfns.deparse_getline(
-                            code, remapped_file, lineno, opts
+                            code, remapped_file, line_number, opts
                         )
                     pass
             pass
@@ -304,15 +309,16 @@ def print_location(proc_obj):
         print_source_location_info(
             intf_obj.msg,
             filename,
-            lineno,
+            line_number,
             fn_name,
             remapped_file=remapped_file,
             f_lasti=last_i,
+            column_number=column_number,
         )
         if line and len(line.strip()) != 0:
             if proc_obj.event:
                 print_source_line(
-                    intf_obj.msg, lineno, line, proc_obj.event2short[proc_obj.event]
+                    intf_obj.msg, line_number, line, proc_obj.event2short[proc_obj.event]
                 )
             pass
 
@@ -341,7 +347,7 @@ def print_location(proc_obj):
     return True
 
 
-def print_source_line(msg, lineno, line, event_str=None):
+def print_source_line(msg, line_number, line, event_str=None):
     """Print out a source line of text , e.g. the second
     line in:
         (/tmp.py:2):  <module>
@@ -354,11 +360,12 @@ def print_source_line(msg, lineno, line, event_str=None):
 
     # We don't use the filename normally. ipython and other applications
     # however might.
-    return msg("%s %d %s" % (event_str, lineno, line))
+    return msg("%s %d %s" % (event_str, line_number, line))
 
 
 def print_source_location_info(
-    print_fn, filename, lineno, fn_name=None, f_lasti=None, remapped_file=None
+        print_fn, filename, line_number, fn_name=None, f_lasti=None, remapped_file=None,
+        column_number = None
 ):
     """Print out a source location , e.g. the first line in
     line in:
@@ -366,10 +373,12 @@ def print_source_location_info(
         L -- 2 import sys,os
         (trepan3k)
     """
+    if column_number is not None:
+        column_str = f":{column_number}"
     if remapped_file:
-        mess = f"({remapped_file}:{lineno} remapped {filename}"
+        mess = f"({remapped_file}:{line_number}{column_str} remapped {filename}"
     else:
-        mess = f"({filename}:{lineno}"
+        mess = f"({filename}:{line_number}{column_str}"
     if f_lasti and f_lasti != -1:
         mess += " @%d" % f_lasti
         pass

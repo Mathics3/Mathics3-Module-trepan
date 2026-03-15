@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#   Copyright (C) 2024 Rocky Bernstein <rocky@gnu.org>
+#   Copyright (C) 2024, 2026 Rocky Bernstein <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -176,12 +176,12 @@ def format_eval_builtin_fn(frame, style: str) -> str:
 
 
 def format_stack_entry(
-    dbg_obj, frame_lineno, lprefix=": ", include_location=True, style="none"
+    dbg_obj, frame_lineno_colno, lprefix=": ", include_location=True, style="none"
 ) -> str:
     """Format and return a stack entry gdb-style.
     Note: lprefix is not used. It is kept for compatibility.
     """
-    frame, line_number = frame_lineno
+    frame, line_number, column_number = frame_lineno_colno
 
     if is_builtin_eval_fn(frame):
         s = format_eval_builtin_fn(frame, style=style)
@@ -197,7 +197,7 @@ def format_stack_entry(
             s += "\n    "
 
     s += format_return_and_location(
-        frame, line_number, dbg_obj, is_module, include_location, style
+        frame, line_number, column_number, dbg_obj, is_module, include_location, style
     )
     return s
 
@@ -227,8 +227,8 @@ def print_expression_stack(proc_obj, count: int, style="none"):
     intf = proc_obj.intf[-1]
     n = len(proc_obj.stack)
     for i in range(n):
-        frame_lineno = proc_obj.stack[len(proc_obj.stack) - i - 1]
-        frame = frame_lineno[0]
+        frame_lineno_colno = proc_obj.stack[len(proc_obj.stack) - i - 1]
+        frame = frame_lineno_colno[0]
         self_obj = frame.f_locals.get("self", None)
         if isinstance(self_obj, Expression):
             if frame is proc_obj.curframe:
@@ -239,7 +239,7 @@ def print_expression_stack(proc_obj, count: int, style="none"):
             intf.msg(f"{stack_nums} {frame.f_code.co_qualname} {self_obj.__class__}")
             intf.msg(
                 " " * (4 + len(stack_nums))
-                + format_stack_entry(proc_obj.debugger, frame_lineno, style=style)
+                + format_stack_entry(proc_obj.debugger, frame_lineno_colno, style=style)
             )
             j += 1
             if j >= count:
@@ -254,8 +254,8 @@ def print_builtin_stack(proc_obj, count: int, style="none"):
     intf = proc_obj.intf[-1]
     n = len(proc_obj.stack)
     for i in range(n):
-        frame_lineno = proc_obj.stack[len(proc_obj.stack) - i - 1]
-        frame, line_number = frame_lineno
+        frame_lineno_colno = proc_obj.stack[len(proc_obj.stack) - i - 1]
+        frame, line_number, column_number = frame_lineno_colno
         if is_builtin_eval_fn(frame):
             if frame is proc_obj.curframe:
                 intf.msg_nocr(format_token(Arrow, "B>", style=style))
@@ -266,7 +266,13 @@ def print_builtin_stack(proc_obj, count: int, style="none"):
             intf.msg(
                 " " * (4 + len(stack_nums))
                 + format_return_and_location(
-                    frame, line_number, proc_obj.debugger, False, True, style
+                    frame=frame,
+                    line_number=line_number,
+                    column_number=column_number,
+                    debugger=proc_obj.debugger,
+                    is_module=False,
+                    include_location=True,
+                    style=style,
                      ))
             j += 1
             if j >= count:
@@ -274,15 +280,15 @@ def print_builtin_stack(proc_obj, count: int, style="none"):
 
 
 def print_stack_entry(proc_obj, i_stack: int, style="none", opts={}):
-    frame_lineno = proc_obj.stack[len(proc_obj.stack) - i_stack - 1]
-    frame, _ = frame_lineno
+    frame_lineno_colno = proc_obj.stack[len(proc_obj.stack) - i_stack - 1]
+    frame, _, _ = frame_lineno_colno
     intf = proc_obj.intf[-1]
     if frame is proc_obj.curframe:
         intf.msg_nocr(format_token(Arrow, "->", style=style))
     else:
         intf.msg_nocr("##")
     intf.msg(
-        f"{i_stack} {format_stack_entry(proc_obj.debugger, frame_lineno, style=style)}"
+        f"{i_stack} {format_stack_entry(proc_obj.debugger, frame_lineno_colno, style=style)}"
     )
 
 
