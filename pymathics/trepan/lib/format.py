@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#   Copyright (C) 2025 Rocky Bernstein <rocky@gnu.org>
+#   Copyright (C) 2025-2026 Rocky Bernstein <rocky@gnu.org>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ from mathics.core.expression import Expression
 from mathics.core.list import ListExpression
 from mathics.core.convert.op import operator_to_ascii
 from mathics.core.parser.operators import (
-    all_operators,
+    OPERATOR_PRECEDENCE,
     flat_binary_operators,
     inequality_operators,
     left_binary_operators,
@@ -326,10 +326,10 @@ def get_operator_precedence(element) -> int:
     # So "short_name" might not be applicable.
     if hasattr(head, "short_name"):
         operator_name = head.short_name
-        if operator_name in all_operators:
+        if operator_name in OPERATOR_PRECEDENCE:
             operator_str = operator_to_ascii.get(operator_name, None)
             if operator_str is not None:
-                return all_operators[operator_name]
+                return OPERATOR_PRECEDENCE[operator_name]
 
     return NO_PARENTHESIS_PRECEDENCE
 
