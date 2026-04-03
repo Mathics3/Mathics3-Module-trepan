@@ -6,10 +6,10 @@ requires = [
   "requests",
   "sympy",
   "pygments",
-  "mathics-pygments",
-  "trepan3k >= 1.4.0",
+  "Mathics3-pygments",
+  "trepan3k >= 1.5.0",
   "Mathics3-Module-Base",
-  "Mathics_Scanner >= 2.0.0",
+  "Mathics3_Scanner > 9.0.0",
   "Mathics3 > 9.0.0",
 ]
 build-backend = "setuptools.build_meta"
@@ -18,13 +18,13 @@ build-backend = "setuptools.build_meta"
 name = "Mathics3-Module-trepan"
 description = 'Mathics3 Debugger Module based on trepan debuggers'
 dependencies = [
-        "Mathics_Scanner > 2.0",
+        "Mathics3_Scanner > 9.0",
         "Mathics3 > 9.0.0",
         "Mathics3-Module-Base",
-        "mathics-pygments",
+        "Mathics3-pygments",
         "trepan3k>1.5.1",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.rst"
 license = "GPL-3.0-or-later"
 keywords = ["Mathematica", "Wolfram", "Interpreter", "Shell", "Math", "CAS"]
@@ -35,10 +35,10 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Scientific/Engineering",
