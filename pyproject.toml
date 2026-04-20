@@ -9,8 +9,8 @@ requires = [
   "Mathics3-pygments",
   "trepan3k >= 1.5.0",
   "Mathics3-Module-Base",
-  "Mathics3_Scanner > 9.0.0",
-  "Mathics3 > 9.0.0",
+  "Mathics3_Scanner >= 10.0.0",
+  "Mathics3 >= 10.0.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -18,8 +18,8 @@ build-backend = "setuptools.build_meta"
 name = "Mathics3-Module-trepan"
 description = 'Mathics3 Debugger Module based on trepan debuggers'
 dependencies = [
-        "Mathics3_Scanner > 9.0",
-        "Mathics3 > 9.0.0",
+        "Mathics3_Scanner >= 10.0",
+        "Mathics3 >= 10.0.0",
         "Mathics3-Module-Base",
         "Mathics3-pygments",
         "trepan3k>1.5.1",
@@ -40,7 +40,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Software Development :: Interpreters",
