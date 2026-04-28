@@ -37,7 +37,10 @@ def format_as_file_line(loc: Union[SourceRange, types.MethodType]) -> str:
         line_number = code.co_firstlineno
         return "(%s:%s): <module>" % (filename, line_number)
 
-    filename = MATHICS3_PATHS[loc.container]
+    try:
+        filename = MATHICS3_PATHS[loc.container]
+    except IndexError:
+        filename = "???"
     return "(%s:%s): <module>" % (filename, loc.start_line)
 
 def format_location(style: str, loc: Union[SourceRange, types.MethodType]) -> str:

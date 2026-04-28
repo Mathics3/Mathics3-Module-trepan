@@ -9,7 +9,8 @@ PYTHON ?= python3
 RM  ?= rm
 
 .PHONY: \
-    check clean dist distclean test rmChangeLog flake8
+   ChangeLog-without-corrections \
+   check clean dist distclean test rmChangeLog flake8
 
 #: Clean up temporary files
 clean:
@@ -22,11 +23,14 @@ clean:
 dist:
 	./admin-tools/make-dist.sh
 
-#: Create a ChangeLog from git via git log and git2cl
-ChangeLog: rmChangeLog
-	git log --pretty --numstat --summary | $(GIT2CL) >$@
-	patch ChangeLog < ChangeLog-spell-corrected.diff
+#: Create ChangeLog from version control without corrections
+ChangeLog-without-corrections:
+	git log --pretty --numstat --summary | $(GIT2CL) >ChangeLog
 
 #: Remove ChangeLog
 rmChangeLog:
 	$(RM) ChangeLog || true
+
+#: Create a ChangeLog from git via git log and git2cl
+ChangeLog: rmChangeLog ChangeLog-without-corrections
+	patch -p0 ChangeLog < ChangeLog-spell-corrected.diff
