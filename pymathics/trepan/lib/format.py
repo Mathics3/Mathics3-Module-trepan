@@ -38,7 +38,7 @@ from mathics.core.parser.operators import (
     ternary_operators,
 )
 from mathics.core.pattern import AtomPattern, ExpressionPattern
-from mathics.core.rules import FunctionApplyRule, Rule
+from mathics.core.rules import FunctionApplyRule, RewriteRule
 from mathics.core.symbols import Symbol, SymbolList
 from mathics.core.systemsymbols import (
     SymbolBlank,
@@ -302,7 +302,7 @@ def format_element(
     # FIXME handle other than 2 arguments...
     elif isinstance(element, Pattern) and len(element.elements) == 2:
         return format_pattern(element.elements)
-    elif isinstance(element, Rule):
+    elif isinstance(element, RewriteRule):
         return (
             f"{format_element(element.pattern, use_operator_form=use_operator_form)} "
             f"-> {format_element(element.replace, use_operator_form=use_operator_form)}"

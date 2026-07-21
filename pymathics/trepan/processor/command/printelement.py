@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#  Copyright (C) 2024 Rocky Bernstein
+#  Copyright (C) 2024, 2026 Rocky Bernstein
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,9 +18,11 @@ from getopt import getopt, GetoptError
 
 from mathics.core.element import BaseElement
 from mathics.core.pattern import AtomPattern, ExpressionPattern
-from mathics.core.rules import FunctionApplyRule, Rule
+from mathics.core.rules import FunctionApplyRule, RewriteRule
 from pymathics.trepan.processor.command.base_cmd import DebuggerCommand
 from pymathics.trepan.lib.format import format_element, pygments_format
+
+DictKeysType = type({}.keys())
 
 class PrintElementCommand(DebuggerCommand):
     """**printelement** [-p] [*Mathics3 element*]
@@ -70,9 +72,9 @@ class PrintElementCommand(DebuggerCommand):
 
         if not allow_python or not isinstance(value, (dict, list, tuple)):
             if not isinstance(value, (AtomPattern, BaseElement,
-                                      ExpressionPattern, FunctionApplyRule, Rule)):
+                                      ExpressionPattern, FunctionApplyRule, RewriteRule)):
                 self.errmsg(f"text: {text} does not evaluate to a type I know about; is {type(value)}")
-                if isinstance(value, (dict, list, tuple)):
+                if isinstance(value, (dict, list, tuple, DictKeysType)):
                     self.msg("Try adding option -p?")
                 return
 
